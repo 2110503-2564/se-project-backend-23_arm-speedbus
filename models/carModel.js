@@ -21,7 +21,7 @@ const CarSchema = new mongoose.Schema({
 });
 
 CarSchema.virtual('Provider', {
-    ref: 'UserModel',
+    ref: 'ProviderModel',
     localField: 'provider_id',
     foreignField: '_id',
     justOne: false
