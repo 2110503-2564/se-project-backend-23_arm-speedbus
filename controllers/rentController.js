@@ -105,6 +105,67 @@ exports.addRent = async (req, res, next) => {
     }
 };
 
+//@desc  Update rent
+//@route  PUT /api/v1/rents/:id
+//@access Private
 
+exports.updateRent = async (req, res, next) => {
+    try {
+        let rent = await Rent.findById(req.params.id);
+
+        if (!rent) {
+            return res.status(404).json({ success: false, message: `No rent with the id of ${req.params.id}` });
+        }
+
+        // Make sure user is the rent owner 
+        if (rent.user_id.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(401).json({ success: false, message: `User ${req.user.id} is not authorized to update this rent` });
+        }
+
+        // Update rent
+        rent = await Rent.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true
+        });
+
+        res.status(200).json({
+            success: true,
+            data: rent
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: 'Cannot update Rent' });
+    }
+};
+
+// @desc  Delete rent
+// @route  DELETE /api/v1/rents/:id
+// @access Private
+exports.deleteRent = async (req, res, next) => {
+    try {
+        const rent = await Rent.findById(req.params.id);
+
+        if (!rent) {
+            return res.status(404).json({ success: false, message: `No rent with the id of ${req.params.id}` });
+        }
+
+        // User can delete their own rent, admin can delete any rent
+        if (rent.user_id.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(401).json({ success: false, message: `User ${req.user.id} is not authorized to delete this rent` });
+        }
+
+        await Rent.findByIdAndDelete(req.params.id);  
+
+        res.status(200).json({
+            success: true,
+            data: {}
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Cannot delete rent" });
+    }
+};
 
 
