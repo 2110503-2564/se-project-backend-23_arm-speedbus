@@ -15,9 +15,9 @@ const carRoute = require('./routes/carRoute');
 const authRoute = require('./routes/authRoute');
 const rentRoute = require('./routes/rentRoute');
 
-app.use('/api/v1/hospitals', carRoute);
+//app.use('/api/v1/cars', carRoute);
 app.use('/api/v1/auth', authRoute);
-app.use('/api/v1/rents',rentRoute);
+//app.use('/api/v1/rents',rentRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
