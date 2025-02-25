@@ -1,5 +1,5 @@
 const exp = require('constants');
-const car = require('../models/CarModel');
+const Car = require('../models/CarModel');
 
 // @desc    Get all cars
 // @route   GET /api/v1/cars
@@ -9,7 +9,7 @@ exports.getCars = async (req, res, next) => {
         let query;
         let queryStr = JSON.stringify(req.query);
         queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-        query = car.find(JSON.parse(queryStr));
+        query = Car.find(JSON.parse(queryStr));
 
         if (req.query.select) {
             const fields = req.query.select.split(',').join(' ');
@@ -34,7 +34,7 @@ exports.getCars = async (req, res, next) => {
 // @access  Public
 exports.getCar = async (req, res, next) => {
     try {
-        const car = await car.findById(req.params.id);
+        const car = await Car.findById(req.params.id);
         if(!car){
             return res.status(400).json({success:false});
         }
@@ -50,7 +50,7 @@ exports.getCar = async (req, res, next) => {
 // @access  Provider
 exports.createCar = async (req, res, next) => {
     try {
-        const car = await car.create(req.body);
+        const car = await Car.create(req.body);
         res.status(201).json({ success: true, data: car });
     } catch (err) {
         res.status(400).json({ success: false });
@@ -63,7 +63,7 @@ exports.createCar = async (req, res, next) => {
 // @access  Provider
 exports.updateCar = async (req, res, next) => {
     try {
-        const car = await car.findByIdAndUpdate(req.params.id, req.body, {
+        const car = await Car.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         });
@@ -82,7 +82,7 @@ exports.updateCar = async (req, res, next) => {
 // @access  Provider
 exports.deleteCar = async (req, res, next) => {
     try {
-        const car = await car.findById(req.params.id);
+        const car = await Car.findById(req.params.id);
         if (!car) {
             return res.status(400).json({ success: false, message: 'Car not found' });
         }
