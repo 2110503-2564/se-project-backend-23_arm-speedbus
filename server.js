@@ -14,8 +14,10 @@ app.use(cookieParser());
 const carRoute = require('./routes/carRoute');
 const authRoute = require('./routes/authRoute');
 const rentRoute = require('./routes/rentRoute');
+const providerRoute = require('./routes/rentRoute');
 
-//app.use('/api/v1/cars', carRoute);
+aoo.use('/api/v1/providers', providerRoute);
+app.use('/api/v1/cars', carRoute);
 app.use('/api/v1/auth', authRoute);
 //app.use('/api/v1/rents',rentRoute);
 
