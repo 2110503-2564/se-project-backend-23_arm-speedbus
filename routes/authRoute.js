@@ -1,7 +1,7 @@
 const express = require('express');
 const { register, login, getMe } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
-console.log('Auth routes loaded');
+// console.log('Auth routes loaded');
 
 const router = express.Router();
 

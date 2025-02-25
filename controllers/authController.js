@@ -7,6 +7,12 @@ exports.register = async (req,res,next)=>{
     try{
         const {name, tel, email, password, role} = req.body;
         
+        //Check if duplicate email address exists
+        const existedUser = await User.findOne({email});
+        if(existedUser){
+            return res.status(400).json({success:false,message:'This email is already registered'});
+        }
+
         //Create user
         const user = await User.create({
             name,
