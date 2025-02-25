@@ -35,7 +35,6 @@ exports.getCars = async (req, res, next) => {
 exports.getCar = async (req, res, next) => {
     try {
         const car = await car.findById(req.params.id);
-
         if(!car){
             return res.status(400).json({success:false});
         }
@@ -51,13 +50,7 @@ exports.getCar = async (req, res, next) => {
 // @access  Provider
 exports.createCar = async (req, res, next) => {
     try {
-        //make sure that only role: proider can create a car
-        if(req.user.role !== 'provider'){
-            return res.status(400).json({success:false, message:"Only provider can create a car"});
-        }
-
         const car = await car.create(req.body);
-
         res.status(201).json({ success: true, data: car });
     } catch (err) {
         res.status(400).json({ success: false });
@@ -70,16 +63,10 @@ exports.createCar = async (req, res, next) => {
 // @access  Provider
 exports.updateCar = async (req, res, next) => {
     try {
-        //make sure that only role: proider can update a car
-        if(req.user.role !== 'provider'){
-            return res.status(400).json({success:false, message:"Only provider can update a car"});
-        }
-
         const car = await car.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         });
-
         if (!car) {
             return res.status(400).json({ success: false });
         }
@@ -95,19 +82,11 @@ exports.updateCar = async (req, res, next) => {
 // @access  Provider
 exports.deleteCar = async (req, res, next) => {
     try {
-        //make sure that only role: proider can delete a car
-        if(req.user.role !== 'provider'){
-            return res.status(400).json({success:false, message:"Only provider can delete a car"});
-        }
-
         const car = await car.findById(req.params.id);
-
         if (!car) {
             return res.status(400).json({ success: false, message: 'Car not found' });
         }
-
         await car.removeOne({ _id: req.params.id });
-
         res.status(200).json({ success: true, data: {} });
     } catch (err) {
         res.status(400).json({ success: false });
