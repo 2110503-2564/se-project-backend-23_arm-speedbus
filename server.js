@@ -11,10 +11,10 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-const carRoutes = require('./routes/carRoute');
-// const userRoutes = require('./routes/userRoute');
-// const authRoutes = require('./routes/authRoute');
-const rentRoutes = require('./routes/rentRoute');
+const carRoute = require('./routes/carRoute');
+const userRoutes = require('./routes/userRoute');
+const authRoutes = require('./routes/authRoute');
+const rentRoute = require('./routes/rentRoute');
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
