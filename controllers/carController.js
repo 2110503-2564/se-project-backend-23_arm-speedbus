@@ -1,5 +1,5 @@
 const exp = require('constants');
-const car = require('../models/carModel');
+const car = require('../models/CarModel');
 
 // @desc    Get all cars
 // @route   GET /api/v1/cars
