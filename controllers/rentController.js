@@ -1,6 +1,6 @@
-const Rent = require('../models/Rent'); 
-const Car = require('../models/Car'); 
-const User = require('../models/User'); 
+const Rent = require('../models/RentModel'); 
+const Car = require('../models/CarModel'); 
+const User = require('../models/UserModel'); 
 
 // @desc   Get all rents
 // @route  GET /api/v1/rents
@@ -72,13 +72,10 @@ exports.getRent = async (req, res, next) => {
     }
 };
 
-
-
-
-// @desc   Add rent
+// @desc   Create rent
 // @route  POST /api/v1/cars/:carId/rents/
 // @access Private
-exports.addRent = async (req, res, next) => {
+exports.createRent = async (req, res, next) => {
     try {
         req.body.car_id = req.params.carId;
         req.body.user_id = req.user.id;
