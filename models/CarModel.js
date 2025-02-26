@@ -14,7 +14,21 @@ const CarSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Provider', 
         required: true 
-    }
+    },
+    capacity: { 
+        type: Number, 
+        required: true 
+    },
+    model: { 
+        type: String, 
+        required: true 
+    },
+    pricePerDay: { 
+        type: Number, 
+        required: true 
+    },
+
+
     }, { 
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
