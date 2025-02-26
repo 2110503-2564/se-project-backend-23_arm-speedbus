@@ -24,11 +24,13 @@ const ProviderSchema = new mongoose.Schema({
     },
     openTime: { 
         type: String, 
-        required: true 
+        required: true,
+        match: [/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, 'Time must be in HH:mm:ss format'] 
     },
     closeTime: { 
         type: String, 
-        required: true 
+        required: true,
+        match: [/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, 'Time must be in HH:mm:ss format']
     },
     }, { 
     toJSON: { virtuals: true },
