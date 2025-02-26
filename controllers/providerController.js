@@ -37,11 +37,10 @@ exports.getProvider = async (req, res, next) => {
 exports.createProvider = async (req, res, next) => {
     try {
         const {name, address, tel, email, openTime, closeTime} = req.body;
-
-        //Check if duplicate email address exists
+        //Check if provided email address already exists
         const existedProvider = await Provider.findOne({email});
         if(existedProvider){
-            return res.status(400).json({success:false,message:'Cannot add! The email for this provider is already registered'});
+            return res.status(400).json({success:false,message:`Cannot add! The email ${req.body.email} for this provider is already registered`});
         }
         const provider = await Provider.create(req.body);
         
@@ -59,10 +58,14 @@ exports.createProvider = async (req, res, next) => {
 exports.updateProvider = async (req, res, next) => {
     try {
         const {name, address, tel, email, openTime, closeTime} = req.body;
-        //Check if duplicate email address exists
-        const existedProvider = await Provider.findOne({email});
-        if(existedProvider){
-            return res.status(400).json({success:false,message:'Cannot update! This email for this provider is already registered'});
+        //Check for duplicate email if email is provided
+        if (email) {
+            const existedProvider = await Provider.findOne({ email, _id: { $ne: req.params.id } });
+            if (existedProvider) {
+                return res.status(400).json({
+                    success: false,message: `Cannot update! The email ${email} is already registered`,
+                });
+            }
         }
 
         const provider = await Provider.findByIdAndUpdate(req.params.id, req.body, {

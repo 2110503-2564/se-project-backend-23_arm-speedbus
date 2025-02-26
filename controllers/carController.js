@@ -1,4 +1,5 @@
 const Car = require('../models/CarModel');
+const Provider = require('../models/ProviderModel');
 
 // @desc    Get all cars
 // @route   GET /api/v1/cars
@@ -33,6 +34,12 @@ exports.getCars = async (req, res, next) => {
 // @access  Public
 exports.getCar = async (req, res, next) => {
     try {
+        //Check if provider exists in database
+        const provider = await Provider.findById(provider_id);
+        if(!provider){
+            return res.status(400).json({success:false,message:`Cannot add! The provider with the id ${provider_id} does not exist`});
+        }
+
         const car = await Car.findById(req.params.id);
         if(!car){
             return res.status(404).json({success:false,message:`Car with the id ${req.params.id} does not exist`});
@@ -49,6 +56,17 @@ exports.getCar = async (req, res, next) => {
 // @access  Provider
 exports.createCar = async (req, res, next) => {
     try {
+        const {name, vin_plate, provider_id, capacity, model, pricePerDay} = req.body;
+        //Check if duplicate email address exists
+        const existedCar = await Car.findOne({vin_plate});
+        if(existedCar){
+            return res.status(400).json({success:false,message:`Cannot add! This car with VIN ${req.body.vin_plate} is already registered`});
+        }
+        const provider = await Provider.findById(provider_id);
+        if(!provider){
+            return res.status(400).json({success:false,message:`Cannot add! The provider with the id ${provider_id} does not exist`});
+        }
+
         const car = await Car.create(req.body);
         res.status(201).json({success:true,data: car});
     } catch (err) {
@@ -62,6 +80,21 @@ exports.createCar = async (req, res, next) => {
 // @access  Provider
 exports.updateCar = async (req, res, next) => {
     try {
+        // Check if a car with the provided VIN plate already exists
+        const {name, vin_plate, provider_id, capacity, model, pricePerDay} = req.body;
+        if (vin_plate) {
+            const existedCar = await Car.findOne({vin_plate});
+            if (existedCar) {
+                return res.status(400).json({success: false, message: `Cannot update! This car with VIN ${vin_plate} is already registered`});
+            }
+        }
+
+        // Check if the provider exists
+        const provider = await Provider.findById(provider_id);
+        if (!provider){
+            return res.status(400).json({success: false, message: `Cannot update! The provider with the id ${provider_id} does not exist`});
+        }
+
         const car = await Car.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
