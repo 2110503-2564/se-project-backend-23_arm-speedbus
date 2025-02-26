@@ -1,4 +1,3 @@
-const exp = require('constants');
 const Car = require('../models/CarModel');
 
 // @desc    Get all cars
@@ -22,10 +21,10 @@ exports.getCars = async (req, res, next) => {
         }
 
         const cars = await query;
-        res.status(200).json({ success: true, data: cars });
+        res.status(200).json({success: true, data: cars});
     } catch (err) {
-        res.status(400).json({ success: false });
-        console.log(err.stack);
+        res.status(400).json({success: false,message:'Cannot get cars'});
+        // console.log(err.stack);
     }
 }
 
@@ -36,12 +35,12 @@ exports.getCar = async (req, res, next) => {
     try {
         const car = await Car.findById(req.params.id);
         if(!car){
-            return res.status(400).json({success:false});
+            return res.status(404).json({success:false,message:`Car with the id ${req.params.id} does not exist`});
         }
 
-        res.status(200).json({ success: true, data: car });
+        res.status(200).json({success:true, data:car});
     } catch (err) {
-        res.status(400).json({ success: false });
+        res.status(400).json({success:false,message:'Cannot get a car'});
     }
 }
 
@@ -51,9 +50,9 @@ exports.getCar = async (req, res, next) => {
 exports.createCar = async (req, res, next) => {
     try {
         const car = await Car.create(req.body);
-        res.status(201).json({ success: true, data: car });
+        res.status(201).json({success:true,data: car});
     } catch (err) {
-        res.status(400).json({ success: false });
+        res.status(400).json({success:false,message:'Cannot create a car'});
     }
 }
 
@@ -68,12 +67,12 @@ exports.updateCar = async (req, res, next) => {
             runValidators: true
         });
         if (!car) {
-            return res.status(400).json({ success: false });
+            return res.status(404).json({success:false,message:`Car with the id ${req.params.id} does not exist`});
         }
 
-        res.status(200).json({ success: true, data: car });
+        res.status(200).json({success:true,data:car});
     } catch (err) {
-        res.status(400).json({ success: false });
+        res.status(400).json({success:false,message:'Cannot update a car'});
     }
 }
 
@@ -84,11 +83,11 @@ exports.deleteCar = async (req, res, next) => {
     try {
         const car = await Car.findById(req.params.id);
         if (!car) {
-            return res.status(400).json({ success: false, message: 'Car not found' });
+            return res.status(404).json({success:false,message:`Car with the id ${req.params.id} does not exist`});
         }
         await car.removeOne({ _id: req.params.id });
-        res.status(200).json({ success: true, data: {} });
+        res.status(200).json({success:true,data:{}});
     } catch (err) {
-        res.status(400).json({ success: false });
+        res.status(400).json({success:false,message:'Cannot delete a car'});
     }
 }

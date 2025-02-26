@@ -55,7 +55,7 @@ exports.updateProvider = async (req, res, next) => {
         });
         
         if (!provider) {
-            return res.status(404).json({success: false, message:`Provider with the id ${req.params.id} does not exist`});
+            return res.status(404).json({success: false,message:`Provider with the id ${req.params.id} does not exist`});
         }
 
         res.status(200).json({success:true, data:provider});
