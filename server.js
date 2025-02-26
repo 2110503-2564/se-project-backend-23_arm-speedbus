@@ -22,7 +22,7 @@ app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/rents',rentRoute);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
+const server = app.listen(PORT, console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
 
 //handle unhandeled promise rejections
 process.on('unhandledRejection', (err, promise) => {

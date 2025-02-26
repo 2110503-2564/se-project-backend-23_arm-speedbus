@@ -59,8 +59,8 @@ exports.updateProvider = async (req, res, next) => {
     try {
         const {name, address, tel, email, openTime, closeTime} = req.body;
         //Check for duplicate email if email is provided
-        if (email) {
-            const existedProvider = await Provider.findOne({ email, _id: { $ne: req.params.id } });
+        if(email){
+            const existedProvider = await Provider.findOne({email, _id: {$ne:req.params.id}});
             if (existedProvider) {
                 return res.status(400).json({
                     success: false,message: `Cannot update! The email ${email} is already registered`,
