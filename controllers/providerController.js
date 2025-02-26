@@ -39,7 +39,7 @@ exports.createProvider = async (req, res, next) => {
         const provider = await Provider.create(req.body);
         res.status(201).json({success:true, data:provider});
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         res.status(400).json({success:false, message:'Cannot add a provider'});
     }
 }
