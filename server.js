@@ -2,14 +2,33 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const {xss} = require('express-xss-sanitizer');
+const rateLimit=require('express-rate-limit');
+const hpp = require('hpp');
+const cors = require('cors');
+
 
 dotenv.config({ path: './config/config.env' });
 
 connectDB();
 
 const app = express();
+
+const limiter = rateLimit({
+    windowMs:10*60*1000,//10 mins
+    max:1000
+});
+
 app.use(express.json());
 app.use(cookieParser());
+app.use(mongoSanitize());
+app.use(helmet());
+app.use(xss());
+app.use(limiter);
+app.use(hpp());
+app.use(cors());
 
 const carRoute = require('./routes/carRoute');
 const authRoute = require('./routes/authRoute');
