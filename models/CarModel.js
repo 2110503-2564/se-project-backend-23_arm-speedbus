@@ -10,7 +10,7 @@ const CarSchema = new mongoose.Schema({
         required: true, 
         unique: true 
     },
-    provider_id: { 
+    provider_info: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Provider', 
         required: true 
