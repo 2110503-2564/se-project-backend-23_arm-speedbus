@@ -1,5 +1,6 @@
 const Car = require('../models/CarModel');
 const Provider = require('../models/ProviderModel');
+const Rent = require('../models/RentModel')
 
 // @desc    Get all cars
 // @route   GET /api/v1/cars
@@ -115,11 +116,11 @@ exports.updateCar = async (req, res, next) => {
 // @access  Provider
 exports.deleteCar = async (req, res, next) => {
     try {
-        const car = await Car.findById(req.params.id);
+        const car = await Car.findByIdAndDelete(req.params.id);
         if (!car) {
             return res.status(404).json({success:false,message:`Car with the id ${req.params.id} does not exist`});
         }
-        await car.deleteOne();
+        await Rent.deleteMany({car_info: req.params.id});
         res.status(200).json({success:true,data:{}});
     } catch (err) {
         console.log(err);
