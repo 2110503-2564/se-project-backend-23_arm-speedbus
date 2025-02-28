@@ -10,20 +10,32 @@ exports.getRents = async (req, res, next) => {
 
     if (req.user.role !== 'admin') {
         query = Rent.find({user_info: req.user.id}).populate({
-            path: 'car_info',  
-            select: 'name vin_plate'  
+            path: 'car_info',
+            select: 'name vin_plate startTime endTime'
+        })
+        .populate({
+            path: 'user_info',
+            select: 'name'
         });
     } else {
         if(req.params.carId){
             query = Rent.find({car_info:req.params.carId}).populate({
-                path: 'car_info',  
-                select: 'name vin_plate'  
+                path: 'car_info',
+                select: 'name vin_plate startTime endTime' 
+            })
+            .populate({
+                path: 'user_info',
+                select: 'name'
             });
         }
         else{
             query = Rent.find().populate({
                 path: 'car_info',
-                select: 'name vin_plate'
+                select: 'name vin_plate startTime endTime'
+            })
+            .populate({
+                path: 'user_info',
+                select: 'name'
             });
         }
     }
@@ -44,7 +56,11 @@ exports.getRent = async (req, res, next) => {
     try {
         const rent = await Rent.findById(req.params.id).populate({
             path: 'car_info',
-            select: 'name vin_plate'
+            select: 'name vin_plate startTime endTime'
+        })
+        .populate({
+            path: 'user_info',
+            select: 'name'
         });
         if (!rent) {
             return res.status(404).json({success:false,message:`No rent with the id of ${req.params.id}`});
