@@ -43,6 +43,10 @@ exports.createProvider = async (req, res, next) => {
             return res.status(400).json({success:false,message:`Cannot add! The email ${req.body.email} for this provider is already registered`});
         }
         
+        //check if open time is earlier than close time
+        if(openTime > closeTime){
+            return res.status(400).json({success:false,message:'Open time must be earlier than close time'});
+        }
 
         const provider = await Provider.create(req.body);
         
