@@ -84,7 +84,7 @@ exports.createRent = async (req, res, next) => {
         const {user_info,iDate,startDate,endDate} = req.body;
         req.body.car_info = req.params.carId;
         const car_info = req.body.car_info;
-        req.body.user_info = req.user.id;
+        //req.body.user_info = req.user.id;
 
         const start = new Date(startDate);
         const end = new Date(endDate);
