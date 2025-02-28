@@ -134,7 +134,14 @@ exports.updateRent = async (req, res, next) => {
         if (rent.user_info.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to update this rent`});
         }
-        const {car_info,user_info,iDate,startDate,endDate} = req.body;
+        const {car_info,user_info,iDate,startDate,endDate} = req.body;4
+        const start = startDate ? new Date(startDate) : rent.startDate;
+        const end = endDate ? new Date(endDate) : rent.endDate;
+
+        if(start > end){
+            return res.status(400).json({success:false,message:'End date must be after start date'});
+        }
+
         let carUpdated = false;
         // If the car is changed
         if(car_info && car_info !== rent.car_info){
