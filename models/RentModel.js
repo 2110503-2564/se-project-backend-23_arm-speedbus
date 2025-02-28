@@ -11,6 +11,7 @@ const RentSchema = new mongoose.Schema({
         ref: 'User', 
         required: true 
     },
+    //rent date will be YYYY-MM-DD format, time will default in 00:00:00
     iDate: { 
         type: Date,
         match: [/^\d{4}-\d{2}-\d{2}$/, 'Please provide a valid date in yyyy-mm-dd format'],
