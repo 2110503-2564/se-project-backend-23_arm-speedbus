@@ -42,6 +42,8 @@ exports.createProvider = async (req, res, next) => {
         if(existedProvider){
             return res.status(400).json({success:false,message:`Cannot add! The email ${req.body.email} for this provider is already registered`});
         }
+        
+
         const provider = await Provider.create(req.body);
         
         res.status(201).json({success:true, data:provider});
