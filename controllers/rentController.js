@@ -88,7 +88,7 @@ exports.createRent = async (req, res, next) => {
 
         const start = new Date(startDate);
         const end = new Date(endDate);
-        if(start >= end){
+        if(start > end){
             return res.status(400).json({success:false,message:'End date must be after start date'});
         }
 
