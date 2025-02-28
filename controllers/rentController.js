@@ -11,7 +11,7 @@ exports.getRents = async (req, res, next) => {
     if (req.user.role !== 'admin') {
         query = Rent.find({user_info: req.user.id}).populate({
             path: 'car_info',
-            select: 'name vin_plate startTime endTime'
+            select: 'name vin_plate'
         })
         .populate({
             path: 'user_info',
@@ -21,7 +21,7 @@ exports.getRents = async (req, res, next) => {
         if(req.params.carId){
             query = Rent.find({car_info:req.params.carId}).populate({
                 path: 'car_info',
-                select: 'name vin_plate startTime endTime' 
+                select: 'name vin_plate' 
             })
             .populate({
                 path: 'user_info',
@@ -31,7 +31,7 @@ exports.getRents = async (req, res, next) => {
         else{
             query = Rent.find().populate({
                 path: 'car_info',
-                select: 'name vin_plate startTime endTime'
+                select: 'name vin_plate'
             })
             .populate({
                 path: 'user_info',
@@ -42,7 +42,7 @@ exports.getRents = async (req, res, next) => {
 
     try {
         const rents = await query;
-        res.status(200).json({success:true,count:rents.length,data:rents,});
+        res.status(200).json({success:true,count:rents.length,data:rents});
     } catch (error) {
         console.log(error);
         return res.status(500).json({success:false,message:'Cannot find Rent'});

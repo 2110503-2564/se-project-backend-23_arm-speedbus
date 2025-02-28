@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const RentSchema = new mongoose.Schema({
     car_info: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'CarModel', 
+        ref: 'Car', 
         required: true 
     },
     user_info: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'UserModel', 
+        ref: 'User', 
         required: true 
     },
     iDate: { 
