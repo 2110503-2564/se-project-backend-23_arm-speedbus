@@ -65,6 +65,9 @@ exports.getRent = async (req, res, next) => {
         if (!rent) {
             return res.status(404).json({success:false,message:`No rent with the id of ${req.params.id}`});
         }
+        if (req.user.role !== 'admin' && rent.user_info._id.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Not authorized to view this rent' });
+        }
        
         res.status(200).json({success: true,data: rent});
     } catch (error) {
