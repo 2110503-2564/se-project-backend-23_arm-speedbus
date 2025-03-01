@@ -113,7 +113,7 @@ exports.createRent = async (req, res, next) => {
             return res.status(400).json({success:false,message:`User ${req.user.id} has already rented 3 cars`});
         }
         const rent = await Rent.create(req.body);
-        res.status(200).json({success:true,data:rent});
+        res.status(201).json({success:true,data:rent});
 
     } catch (error) {
         console.log(error);
@@ -134,7 +134,7 @@ exports.updateRent = async (req, res, next) => {
         if (rent.user_info.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to update this rent`});
         }
-        const {car_info,user_info,iDate,startDate,endDate} = req.body;4
+        const {car_info,user_info,iDate,startDate,endDate} = req.body;
         const start = startDate ? new Date(startDate) : rent.startDate;
         const end = endDate ? new Date(endDate) : rent.endDate;
 
