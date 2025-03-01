@@ -21,6 +21,9 @@ const AuditLogSchema = new mongoose.Schema({
     timeStamp:{
         type:Date,
         default:Date.now
+    },
+    description:{
+        type:String
     }
 });
 

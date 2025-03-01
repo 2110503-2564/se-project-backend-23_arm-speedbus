@@ -1,4 +1,5 @@
 const User = require('../models/UserModel');
+const AuditLog = require('../models/AuditLogModel');
 
 //@desc     Register User
 //@route    POST /api/v1/auth/register
@@ -18,6 +19,13 @@ exports.register = async (req,res,next)=>{
             email,
             password,
             role
+        });
+        await AuditLog.create({
+            action:'Register',
+            user_id:user._id,
+            target:'users',
+            target_id:user._id,
+            description:`Registered user id ${user._id} as ${user.role}.`
         });
         sendTokenResponse(user,200,res);
     }
@@ -56,6 +64,13 @@ exports.login = async (req,res,next)=>{
         //Create token
         // const token = user.getSignedJwtToken();
         // res.status(200).json({success:true,token});
+        await AuditLog.create({
+            action:'Login',
+            user_id:user._id,
+            target:'users',
+            target_id:user._id,
+            description:`User id ${user._id} logged in as ${user.role}.`
+        });
         sendTokenResponse(user,200,res);
     }
     catch(err){
@@ -67,11 +82,23 @@ exports.login = async (req,res,next)=>{
 //@route    GET /api/v1/auth/logout
 //@access   Private
 exports.logout = async (req,res,next)=>{
-    res.cookie('token','none',{
-        expires:new Date(Date.now()+10*1000),
-        httpOnly:true
-    });
-    res.status(200).json({success:true,data:{}});
+    try{
+        res.cookie('token','none',{
+            expires:new Date(Date.now()+10*1000),
+            httpOnly:true
+        });
+        await AuditLog.create({
+            action:'Logout',
+            user_id:req.user._id,
+            target:'users',
+            target_id:req.user._id,
+            description:`User id ${req.user._id} logged out.`
+        });
+        res.status(200).json({success:true,data:{}});
+    }
+    catch(err){
+        res.status(400).json({success:false,message:'cannot log out'});
+    }
 }
 
 //Get token from model, create cookie and send response
