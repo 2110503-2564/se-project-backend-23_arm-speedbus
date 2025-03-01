@@ -1,5 +1,6 @@
 const Provider = require('../models/ProviderModel');
 const Car = require('../models/CarModel');
+const AuditLog = require('../models/AuditLogModel');
 
 // @desc    Get all providers
 // @route   GET /api/v1/providers
@@ -19,11 +20,9 @@ exports.getProviders = async (req, res, next) => {
 exports.getProvider = async (req, res, next) => {
     try {
         const provider = await Provider.findById(req.params.id);
-
         if(!provider){
             return res.status(404).json({success:false, message:`Provider with the id ${req.params.id} does not exist`});
         }
-
         res.status(200).json({ success: true, data: provider });
     } catch (err) {
         res.status(400).json({success: false, message:'Cannot get a provider'});
@@ -41,15 +40,19 @@ exports.createProvider = async (req, res, next) => {
         const existedProvider = await Provider.findOne({email});
         if(existedProvider){
             return res.status(400).json({success:false,message:`Cannot add! The email ${req.body.email} for this provider is already registered`});
-        }
-        
+        }        
         //check if open time is earlier than close time
         if(openTime > closeTime){
             return res.status(400).json({success:false,message:'Open time must be earlier than close time'});
         }
-
         const provider = await Provider.create(req.body);
-        
+        await AuditLog.create({
+            action:'Create',
+            user_id:req.user._id,
+            target:'providers',
+            target_id:provider._id,
+            description:`Created provider id ${provider._id}.`
+        });
         res.status(201).json({success:true, data:provider});
     } catch (err) {
         // console.log(err);
@@ -82,7 +85,13 @@ exports.updateProvider = async (req, res, next) => {
         if (!provider) {
             return res.status(404).json({success: false,message:`Provider with the id ${req.params.id} does not exist`});
         }
-
+        await AuditLog.create({
+            action:'Update',
+            user_id:req.user._id,
+            target:'providers',
+            target_id:provider._id,
+            description:`Updated provider id ${provider._id}.`
+        });
         res.status(200).json({success:true, data:provider});
     } catch (err) {
         res.status(400).json({success:false,message:'Cannot update a provider'});
@@ -94,15 +103,21 @@ exports.updateProvider = async (req, res, next) => {
 // @access  admin
 exports.deleteProvider = async (req, res, next) => {
     try {
-        const provider = await Provider.findByIdAndDelete(req.params.id);
-
+        const provider = await Provider.findById(req.params.id);
         if (!provider) {
             return res.status(404).json({success: false, message:`Provider with the id ${req.params.id} does not exist`});
         }
-
         //delete all cars of this provider
         await Car.deleteMany({provider_id: req.params.id});
-
+        const providerId = req.params.id;
+        await Provider.findByIdAndDelete(req.params.id);
+        await AuditLog.create({
+            action:'Delete',
+            user_id:req.user._id,
+            target:'providers',
+            target_id:providerId,
+            description:`deleted provider id ${providerId}.`
+        });
         res.status(200).json({success:true,data:{}});
     } catch (err) {
         res.status(400).json({success: false,message:'Cannot delete a provider'});
