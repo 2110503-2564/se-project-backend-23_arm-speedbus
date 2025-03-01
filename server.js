@@ -34,7 +34,9 @@ const carRoute = require('./routes/carRoute');
 const authRoute = require('./routes/authRoute');
 const rentRoute = require('./routes/rentRoute');
 const providerRoute = require('./routes/providerRoute');
+const auditLogRoute = require('./routes/auditLogRoute');
 
+app.use('/api/v1/auditlogs', auditLogRoute);
 app.use('/api/v1/providers', providerRoute);
 app.use('/api/v1/cars', carRoute);
 app.use('/api/v1/auth', authRoute);
