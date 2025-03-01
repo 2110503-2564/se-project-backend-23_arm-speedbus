@@ -144,7 +144,7 @@ exports.deleteCar = async (req, res, next) => {
             target_id:carId,
             description:`Delete car id ${carId}.`
         });
-        res.status(200).json({success:true,data:{}});
+        res.status(200).json({success:true,data:{},message:`Car with the id of ${req.params.id}, as well as related rentings has been deleted successfully`});
     } catch (err) {
         console.log(err);
         res.status(400).json({success:false,message:'Cannot delete a car'});

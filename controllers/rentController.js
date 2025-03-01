@@ -234,7 +234,7 @@ exports.deleteRent = async (req, res, next) => {
             target_id:rentId,
             description:`Delete renting id ${rentId}.`
         });
-        res.status(200).json({success:true,data:{}});
+        res.status(200).json({success:true,data:{},message:`Renting with the id of ${req.params.id} has been deleted successfully`});
     } catch (error) {
         console.log(error);
         return res.status(500).json({success:false,message:"Cannot delete rent"});

@@ -28,7 +28,6 @@ const CarSchema = new mongoose.Schema({
         required: true 
     },
 
-
     }, { 
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
@@ -40,7 +39,5 @@ CarSchema.virtual('Provider', {
     foreignField: '_id',
     justOne: false
 });
-
-
 
 module.exports = mongoose.model('Car', CarSchema);

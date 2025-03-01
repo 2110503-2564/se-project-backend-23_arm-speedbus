@@ -1,6 +1,7 @@
 const Provider = require('../models/ProviderModel');
 const Car = require('../models/CarModel');
 const AuditLog = require('../models/AuditLogModel');
+const Rent = require('../models/RentModel');
 
 // @desc    Get all providers
 // @route   GET /api/v1/providers
@@ -10,7 +11,7 @@ exports.getProviders = async (req, res, next) => {
         const providers = await Provider.find();
         res.status(200).json({success: true, data: providers});
     } catch (err) {
-        res.status(400).json({success: false, message:'Cannot get providers'});
+        res.status(500).json({success: false, message:'Cannot get providers'});
     }
 }
 
@@ -25,7 +26,7 @@ exports.getProvider = async (req, res, next) => {
         }
         res.status(200).json({ success: true, data: provider });
     } catch (err) {
-        res.status(400).json({success: false, message:'Cannot get a provider'});
+        res.status(500).json({success: false, message:'Cannot get a provider'});
     }
 }
 
@@ -56,7 +57,7 @@ exports.createProvider = async (req, res, next) => {
         res.status(201).json({success:true, data:provider});
     } catch (err) {
         // console.log(err);
-        res.status(400).json({success:false, message:'Cannot add a provider'});
+        res.status(500).json({success:false, message:'Cannot add a provider'});
     }
 }
 
@@ -94,7 +95,7 @@ exports.updateProvider = async (req, res, next) => {
         });
         res.status(200).json({success:true, data:provider});
     } catch (err) {
-        res.status(400).json({success:false,message:'Cannot update a provider'});
+        res.status(500).json({success:false,message:'Cannot update a provider'});
     }
 }
 
@@ -107,19 +108,25 @@ exports.deleteProvider = async (req, res, next) => {
         if (!provider) {
             return res.status(404).json({success: false, message:`Provider with the id ${req.params.id} does not exist`});
         }
-        //delete all cars of this provider
-        await Car.deleteMany({provider_id: req.params.id});
-        const providerId = req.params.id;
+        //Find all cars owned by this provider.
+        const cars = await Car.find({provider_info:req.params.id});
+        const carIds = cars.map(car => car._id);
+
+        //Delete all rents those are related to these cars and all cars owned by this provider.
+        if(carIds.length > 0){
+            await Rent.deleteMany({car_info:{$in:carIds}});
+            await Car.deleteMany({provider_info:req.params.id});
+        }
         await Provider.findByIdAndDelete(req.params.id);
         await AuditLog.create({
             action:'Delete',
             user_id:req.user._id,
             target:'providers',
-            target_id:providerId,
-            description:`deleted provider id ${providerId}.`
+            target_id:req.params.id,
+            description:`Deleted provider id ${req.params.id} and all cars owned by this provider, as well as rents related to those cars.`
         });
-        res.status(200).json({success:true,data:{}});
+        res.status(200).json({success:true,data:{},message:`Provider with the id of ${req.params.id} and associated cars and rents deleted successfully`});
     } catch (err) {
-        res.status(400).json({success: false,message:'Cannot delete a provider'});
+        res.status(500).json({success: false,message:'Cannot delete a provider'});
     }
 }
