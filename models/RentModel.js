@@ -26,7 +26,12 @@ const RentSchema = new mongoose.Schema({
         type: Date,
         match: [/^\d{4}-\d{2}-\d{2}$/, 'Please provide a valid date in yyyy-mm-dd format'],
         required: true 
-    } 
+    },
+    status: {
+        type: String,
+        enum: ['confirmed','finished'],
+        default: 'confirmed'
+    }
 });
 
 module.exports = mongoose.model('Rent', RentSchema);

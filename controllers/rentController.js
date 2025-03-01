@@ -81,7 +81,7 @@ exports.getRent = async (req, res, next) => {
 // @access Private
 exports.createRent = async (req, res, next) => {
     try {
-        const {user_info,iDate,startDate,endDate} = req.body;
+        const {user_info,iDate,startDate,endDate,status} = req.body;
         req.body.car_info = req.params.carId;
         const car_info = req.body.car_info;
         //req.body.user_info = req.user.id;
@@ -108,7 +108,10 @@ exports.createRent = async (req, res, next) => {
         if (!car) {
             return res.status(404).json({success:false,message:`No car with the id of ${req.params.carId}`});
         }
-        const existingRents = await Rent.find({user_info: req.user.id});
+        const existingRents = await Rent.find({
+            user_info: req.user.id,
+            status: 'confirmed' //Count only confirmed renting. Does not count finished.
+        });
         if (existingRents.length >= 3 && req.user.role === "user") {
             return res.status(400).json({success:false,message:`User ${req.user.id} has already rented 3 cars`});
         }
@@ -141,7 +144,15 @@ exports.updateRent = async (req, res, next) => {
         if (rent.user_info.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to update this rent`});
         }
-        const {car_info,user_info,iDate,startDate,endDate} = req.body;
+        const {car_info,user_info,iDate,startDate,endDate,status} = req.body;
+        if(status){
+            if(req.user.role === 'admin'){
+                return res.status(400).json({success:false,message:'User does not have the right to edit renting status'});
+            }
+            else{
+                return res.status(400).json({success:false,message:`Please redirect http://localhost:5000/api/v1/rents/finish/${req.params.id} in order to update this renting`});
+            }
+        }
         const start = startDate ? new Date(startDate) : rent.startDate;
         const end = endDate ? new Date(endDate) : rent.endDate;
 
@@ -230,4 +241,26 @@ exports.deleteRent = async (req, res, next) => {
     }
 };
 
-
+// @desc  Update rent status from confirmed to finished
+// @route  PUT /api/v1/rents/finish/:id
+// @access Private
+exports.finishRent = async (req, res, next) => {
+    try {
+        let rent = await Rent.findById(req.params.id);
+        if (!rent) {
+            return res.status(404).json({success:false,message:`No rent with the id of ${req.params.id}`});
+        }
+        rent = await Rent.findByIdAndUpdate(req.params.id,{status:'finished'},{new: true,runValidators: true});
+        await AuditLog.create({
+            action:'Update',
+            user_id:req.user._id,
+            target:'rents',
+            target_id:rent._id,
+            description:`Changed the status of renting id ${rent._id} to finished.`
+        });
+        res.status(200).json({success:true,data:rent});
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({success:false,message:"Cannot update rent status"});
+    }
+};
