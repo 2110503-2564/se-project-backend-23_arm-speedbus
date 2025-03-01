@@ -6,13 +6,11 @@ const User = require('../models/UserModel');
 exports.register = async (req,res,next)=>{
     try{
         const {name, tel, email, password, role} = req.body;
-        
         //Check if duplicate email address exists
         const existedUser = await User.findOne({email});
         if(existedUser){
             return res.status(400).json({success:false,message:'This email is already registered'});
         }
-
         //Create user
         const user = await User.create({
             name,
@@ -21,10 +19,6 @@ exports.register = async (req,res,next)=>{
             password,
             role
         });
-
-        //Create token
-        // const token = user.getSignedJwtToken();
-        // res.status(200).json({success:true,token});
         sendTokenResponse(user,200,res);
     }
     catch(err){
@@ -70,7 +64,7 @@ exports.login = async (req,res,next)=>{
 }
 
 //@desc     Log out
-//@route    POST /api/v1/auth/logout
+//@route    GET /api/v1/auth/logout
 //@access   Private
 exports.logout = async (req,res,next)=>{
     res.cookie('token','none',{
