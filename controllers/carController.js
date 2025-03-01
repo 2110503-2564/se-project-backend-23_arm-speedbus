@@ -1,6 +1,7 @@
 const Car = require('../models/CarModel');
 const Provider = require('../models/ProviderModel');
-const Rent = require('../models/RentModel')
+const Rent = require('../models/RentModel');
+const AuditLog = require('../models/AuditLogModel');
 
 // @desc    Get all cars
 // @route   GET /api/v1/cars
@@ -68,6 +69,13 @@ exports.createCar = async (req, res, next) => {
             return res.status(400).json({success:false,message:`Cannot add! The provider with the id ${provider_info} does not exist`});
         }
         const car = await Car.create(req.body);
+        await AuditLog.create({
+            action:'Create',
+            user_id:req.user._id,
+            target:'cars',
+            target_id:car._id,
+            description:`Created car id ${car._id}.`
+        });
         res.status(201).json({success:true,data: car});
     } catch (err) {
         res.status(400).json({success:false,message:'Cannot create a car'});
@@ -104,7 +112,13 @@ exports.updateCar = async (req, res, next) => {
         if (!car) {
             return res.status(404).json({success:false,message:`Car with the id ${req.params.id} does not exist`});
         }
-
+        await AuditLog.create({
+            action:'Update',
+            user_id:req.user._id,
+            target:'cars',
+            target_id:car._id,
+            description:`Updated car id ${car._id}.`
+        });
         res.status(200).json({success:true,data:car});
     } catch (err) {
         res.status(400).json({success:false,message:'Cannot update a car'});
@@ -116,11 +130,20 @@ exports.updateCar = async (req, res, next) => {
 // @access  Provider
 exports.deleteCar = async (req, res, next) => {
     try {
-        const car = await Car.findByIdAndDelete(req.params.id);
+        const car = await Car.findById(req.params.id);
         if (!car) {
             return res.status(404).json({success:false,message:`Car with the id ${req.params.id} does not exist`});
         }
         await Rent.deleteMany({car_info: req.params.id});
+        const carId = req.params.id;
+        await Car.findByIdAndDelete(req.params.id);
+        await AuditLog.create({
+            action:'Delete',
+            user_id:req.user._id,
+            target:'cars',
+            target_id:carId,
+            description:`Delete car id ${carId}.`
+        });
         res.status(200).json({success:true,data:{}});
     } catch (err) {
         console.log(err);
