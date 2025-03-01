@@ -113,6 +113,13 @@ exports.createRent = async (req, res, next) => {
             return res.status(400).json({success:false,message:`User ${req.user.id} has already rented 3 cars`});
         }
         const rent = await Rent.create(req.body);
+        await AuditLog.create({
+            action:'Create',
+            user_id:req.user._id,
+            target:'rents',
+            target_id:rent._id,
+            description:`Create renting id ${rent._id}.`
+        });
         res.status(201).json({success:true,data:rent});
 
     } catch (error) {
@@ -180,6 +187,13 @@ exports.updateRent = async (req, res, next) => {
         }
         // Update rent
         rent = await Rent.findByIdAndUpdate(req.params.id,req.body,{new: true,runValidators: true});
+        await AuditLog.create({
+            action:'Update',
+            user_id:req.user._id,
+            target:'rents',
+            target_id:rent._id,
+            description:`Update renting id ${rent._id}.`
+        });
         res.status(200).json({success:true,data:rent});
     } catch (error) {
         console.log(error);
@@ -200,7 +214,15 @@ exports.deleteRent = async (req, res, next) => {
         if (rent.user_info.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to delete this rent`});
         }
-        await Rent.findByIdAndDelete(req.params.id);  
+        const rentId = req.params.id;
+        await Rent.findByIdAndDelete(req.params.id);
+        await AuditLog.create({
+            action:'Delete',
+            user_id:req.user._id,
+            target:'rents',
+            target_id:rentId,
+            description:`Delete renting id ${rentId}.`
+        });
         res.status(200).json({success:true,data:{}});
     } catch (error) {
         console.log(error);
