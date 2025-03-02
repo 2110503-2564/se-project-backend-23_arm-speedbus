@@ -32,6 +32,6 @@ const RentSchema = new mongoose.Schema({
         enum: ['confirmed','finished'],
         default: 'confirmed'
     }
-},{onDelete:'CASCADE'});
+});
 
 module.exports = mongoose.model('Rent', RentSchema);
