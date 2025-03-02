@@ -116,7 +116,7 @@ const sendTokenResponse = (user,statusCode,res)=>{
     }
     res.status(statusCode).cookie('token',token,options).json({
         success:true,
-        User_info:user._id,
+        User_info:user,
         token
     });
 }
