@@ -170,7 +170,7 @@ exports.updateRent = async (req, res, next) => {
                 _id:{$ne:rent._id}, // Exclude the current rent being updated
                 car_info:car_info,  // Check for the new car
                 $or:[
-                    {startDate:{$lt:newCarEndDate},endDate:{$gt:newCarStartDate}}, // Check time overlapping
+                    {startDate:{$lte:newCarEndDate},endDate:{$gte:newCarStartDate}}, // Check time overlapping
                 ]
             });
             if(overlappingCarRents.length > 0){
@@ -189,7 +189,7 @@ exports.updateRent = async (req, res, next) => {
                 _id:{$ne:rent._id}, // Exclude the current rent being updated
                 car_info:rent.car_info,
                 $or:[
-                    {startDate:{$lt:newEndDate},endDate:{$gt:newStartDate}}, // Check time overlapping
+                    {startDate:{$lte:newEndDate},endDate:{$gte:newStartDate}}, // Check time overlapping
                 ]
             });
             if(overlappingCarRents.length > 0){
