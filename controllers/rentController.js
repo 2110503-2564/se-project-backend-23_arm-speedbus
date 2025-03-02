@@ -1,7 +1,7 @@
 const Rent = require('../models/RentModel'); 
 const Car = require('../models/CarModel'); 
 const User = require('../models/UserModel'); 
-
+const AuditLog = require('../models/AuditLogModel'); 
 // @desc   Get all rents
 // @route  GET /api/v1/rents
 // @access Private
