@@ -27,46 +27,6 @@ Providers --> Provider : /{providerId}\n<<path>>
 Providers --> ProviderRepresentation : <<uses>>
 Provider --> ProviderRepresentation : <<uses>>
 
-class Auth as "<<Resource>>\nAuth" {
-    + <<POST>> + login(): User
-    + <<POST>> + register(): User
-    + <<POST>> + logout(): void
-}
-
-
-class UserRepresentation as "<<Representation>>\nUser" {
-    + id: String
-    + name: String
-    + tel: String
-    + email: String
-    + role: String
-    + createdAt: Date
-}
-
-Server --> Auth : /auth\n<<path>>
-Auth --> UserRepresentation : <<uses>>
-
-
-class AuditLogs as "<<Resource>>\nAuditLogs" {
-    + <<GET>> + getAuditLogs(): AuditLog
-}
-class AuditLog as "<<Resource>>\nAuditLog" {
-    + <<GET>> + getAuditLog(): AuditLog
-}
-class AuditLogRepresentation as "<<Representation>>\nAuditLog" {
-    + id: String
-    + user_info: ObjectID
-    + target: String
-    + target_info: ObjectID
-    + timestamp: Date
-    + description: String
-}
-
-Server --> AuditLogs : /auditlogs\n<<path>>
-AuditLogs --> AuditLog : /{auditLogId}\n<<path>>
-AuditLogs --> AuditLogRepresentation : <<uses>>
-AuditLog --> AuditLogRepresentation : <<uses>>
-
 class Rents as "<<Resource>>\nRents" {
     + <<GET>> + getRents(): Rent
 }
@@ -100,6 +60,7 @@ class Car as "<<Resource>>\nCar" {
     + <<DELETE>> + deleteCar(): void
 }
 class CreateRent as "<<Resource>>\nRents" {
+    + <<GET>> + getRents(): Rent
     + <<POST>> + createRents(): Rent
 }
 
@@ -120,5 +81,27 @@ Cars --> CreateRent : /{carId}/rents\n<<path>>
 CreateRent --> RentRepresentation : <<uses>>
 Cars --> CarRepresentation : <<uses>>
 Car --> CarRepresentation : <<uses>>
+
+
+class AuditLogs as "<<Resource>>\nAuditLogs" {
+    + <<GET>> + getAuditLogs(): AuditLog
+}
+class AuditLog as "<<Resource>>\nAuditLog" {
+    + <<GET>> + getAuditLog(): AuditLog
+}
+class AuditLogRepresentation as "<<Representation>>\nAuditLog" {
+    + id: String
+    + user_info: ObjectID
+    + target: String
+    + target_info: ObjectID
+    + timestamp: Date
+    + description: String
+}
+
+Server --> AuditLogs : /auditlogs\n<<path>>
+AuditLogs --> AuditLog : /{auditLogId}\n<<path>>
+AuditLogs --> AuditLogRepresentation : <<uses>>
+AuditLog --> AuditLogRepresentation : <<uses>>
+
 
 @enduml
