@@ -355,7 +355,7 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "Update Provider",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -391,7 +391,7 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "Delete Provider",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -629,167 +629,7 @@
 			"name": "Rent",
 			"item": [
 				{
-					"name": "Create rent1",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"});\r",
-									"\r",
-									"const response = pm.response.json();\r",
-									"const new_rent_id = response.data._id;\r",
-									"\r",
-									"pm.globals.set(\"Rent_ID1\",new_rent_id);\r",
-									"\r",
-									"pm.execution.setNextRequest(\"Create rent2\");\r",
-									"\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"\r",
-									"function getRandomDate(year) {\r",
-									"    const month = Math.floor(Math.random() * 12); \r",
-									"    const day = Math.floor(Math.random() * 28) + 1; \r",
-									"    return new Date(year, month, day);\r",
-									"}\r",
-									"\r",
-									"\r",
-									"let startDate = getRandomDate(2025);\r",
-									"\r",
-									"\r",
-									"let endDate = new Date(startDate);\r",
-									"endDate.setDate(startDate.getDate() + Math.floor(Math.random() * 10) + 1);\r",
-									"\r",
-									"\r",
-									"let startDateFormatted = startDate.toISOString().split('T')[0];\r",
-									"let endDateFormatted = endDate.toISOString().split('T')[0];\r",
-									"\r",
-									"\r",
-									"pm.environment.set(\"startDate\", startDateFormatted);\r",
-									"pm.environment.set(\"endDate\", endDateFormatted);\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"user_info\":\"{{User_info}}\",\r\n    \"startDate\":\"2027-10-10\",\r\n    \"endDate\":\"2027-10-10\"\r\n\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{URL}}/api/v1/cars/67c127dc3c252ae0fe134a77/rents/",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"cars",
-								"67c127dc3c252ae0fe134a77",
-								"rents",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create rent2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"});\r",
-									"const response = pm.response.json();\r",
-									"const new_rent_id = response.data._id;\r",
-									"\r",
-									"pm.globals.set(\"Rent_ID2\",new_rent_id);\r",
-									"\r",
-									"pm.execution.setNextRequest(\"Create rent3\");\r",
-									"\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"user_info\":\"{{User_info}}\",\r\n    \"startDate\":\"2027-10-11\",\r\n    \"endDate\":\"2027-10-11\"\r\n\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{URL}}/api/v1/cars/67c127dc3c252ae0fe134a77/rents/",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"cars",
-								"67c127dc3c252ae0fe134a77",
-								"rents",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create rent3",
+					"name": "Create rent",
 					"event": [
 						{
 							"listen": "test",
@@ -802,7 +642,7 @@
 									"const new_rent_id = response.data._id;\r",
 									"\r",
 									"pm.globals.set(\"Rent_ID3\",new_rent_id);\r",
-									"pm.execution.setNextRequest(\"Create rent4 (400)\");\r",
+									"\r",
 									"\r",
 									"\r",
 									""
@@ -852,66 +692,6 @@
 					"response": []
 				},
 				{
-					"name": "Create rent4 (400)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {\r",
-									"    pm.response.to.have.status(400);\r",
-									"});\r",
-									"\r",
-									"pm.execution.setNextRequest(\"get all rents\");\r",
-									"\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"user_info\":\"{{User_info}}\",\r\n    \"startDate\":\"2027-09-13\",\r\n    \"endDate\":\"2027-09-13\"\r\n\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{URL}}/api/v1/cars/67c127dc3c252ae0fe134a77/rents/",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"cars",
-								"67c127dc3c252ae0fe134a77",
-								"rents",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "get all rents",
 					"event": [
 						{
@@ -929,7 +709,7 @@
 									"});\r",
 									"\r",
 									"\r",
-									"pm.execution.setNextRequest(\"Get single rent\");\r",
+									"\r",
 									""
 								],
 								"type": "text/javascript",
@@ -977,7 +757,7 @@
 									"});\r",
 									"\r",
 									"\r",
-									"pm.execution.setNextRequest(\"Get Single Rent(403)\");\r",
+									"\r",
 									"\r",
 									"\r",
 									"\r",
@@ -1024,52 +804,6 @@
 					"response": []
 				},
 				{
-					"name": "Get Single Rent(403)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 403, user can only view user's rent\", function () {\r",
-									"    pm.response.to.have.status(403);\r",
-									"});\r",
-									"\r",
-									"pm.execution.setNextRequest(\"Update rent\");"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{URL}}/api/v1/rents/67c13c0c80c27adb253d817b",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"rents",
-								"67c13c0c80c27adb253d817b"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Update rent",
 					"event": [
 						{
@@ -1079,8 +813,6 @@
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
-									"\r",
-									"pm.execution.setNextRequest(\"Update rent(400)\");\r",
 									"\r",
 									""
 								],
@@ -1133,53 +865,7 @@
 					"response": []
 				},
 				{
-					"name": "Update rent(400)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401,user can only update user's rent\", function () {\r",
-									"    pm.response.to.have.status(401);\r",
-									"});\r",
-									"\r",
-									"pm.execution.setNextRequest(\"Delete Single Rent1\");"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{URL}}/api/v1/rents/67c13c0c80c27adb253d817b",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"rents",
-								"67c13c0c80c27adb253d817b"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Single Rent1",
+					"name": "Delete Single Rent",
 					"event": [
 						{
 							"listen": "test",
@@ -1189,7 +875,7 @@
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",
-									"pm.execution.setNextRequest(\"Delete Single Rent2\");"
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -1231,156 +917,6 @@
 					"response": []
 				},
 				{
-					"name": "Delete Single Rent2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.execution.setNextRequest(\"Delete Single Rent3\");"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{URL}}/api/v1/rents/:rent_id",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"rents",
-								":rent_id"
-							],
-							"variable": [
-								{
-									"key": "rent_id",
-									"value": "{{Rent_ID2}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Single Rent3",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.execution.setNextRequest(\"Delete Single Rent(401)\");"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{URL}}/api/v1/rents/:rent_id",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"rents",
-								":rent_id"
-							],
-							"variable": [
-								{
-									"key": "rent_id",
-									"value": "{{Rent_ID3}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Single Rent(401)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401,User can delete only User'rent\", function () {\r",
-									"    pm.response.to.have.status(401);\r",
-									"});\r",
-									"\r",
-									"pm.execution.setNextRequest(\"LogOut\");"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{URL}}/api/v1/rents/67c13c0c80c27adb253d817b",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"rents",
-								"67c13c0c80c27adb253d817b"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get rents for car",
 					"request": {
 						"auth": {
@@ -1396,7 +932,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{URL}}/api/v1/cars/67c14a3ce74a1375c5d09c0a/rents",
+							"raw": "{{URL}}/api/v1/cars/67c127dc3c252ae0fe134a77/rents",
 							"host": [
 								"{{URL}}"
 							],
@@ -1404,7 +940,7 @@
 								"api",
 								"v1",
 								"cars",
-								"67c14a3ce74a1375c5d09c0a",
+								"67c127dc3c252ae0fe134a77",
 								"rents"
 							]
 						}
@@ -3413,7 +2949,7 @@
 									"\r",
 									"\r",
 									"\r",
-									"pm.execution.setNextRequest(\"Get single rent\");\r",
+									"pm.execution.setNextRequest(\"Get rents for car\");\r",
 									""
 								],
 								"type": "text/javascript",
@@ -3442,6 +2978,53 @@
 							"path": [
 								"api",
 								"v1",
+								"rents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get rents for car",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(\"Get single rent\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/cars/67c127dc3c252ae0fe134a77/rents",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cars",
+								"67c127dc3c252ae0fe134a77",
 								"rents"
 							]
 						}
