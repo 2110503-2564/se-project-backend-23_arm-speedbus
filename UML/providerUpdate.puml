@@ -8,19 +8,23 @@ participant "Provider Controller" as Controller
 participant "Provider Model" as Model
 database "«MongoDB»\n:providers" as Database
 
-Admin -> Server: POST /api/v1/providers
+Admin -> Server: PUT /api/v1/providers/:id
 Server -> Router: app.use('/api/v1/providers', providers)
-Router -> Controller: updateProvider(req.body)
-Controller -> Model: findOne({ email })
+Router -> Controller: updateProvider(req.params.id, req.body)
 alt new Email already exists
-    Controller -> Server: Response 400 (Email already registered)
-    Server -> Admin: Response 400 (Email already registered)
-else Email is unique or Email not being updated
-    Controller -> Model: create(req.body)
-    Model -> Database: ProviderSchema
-    Database --> Model: return updated Provider
-    Model --> Controller: return updated Provider
-    Controller -> Server: Response 201 (Provider created)
-    Server -> Admin: Response 201 (Provider created)
+    Controller -> Server: Response 400 (VIN already registered)
+    Server -> Admin: Response 400 (VIN already registered)
+else Email is unique or not provided
+    Controller -> Model: findByIdAndUpdate(req.params.id, req.body)
+    alt Provider found
+        Model -> Database: ProviderSchema
+        Database --> Model: return Provider
+        Model --> Controller: return Provider
+        Controller -> Server: Response 200 (Provider updated)
+        Server -> Admin: Response 200 (Provider updated)
+    else Provider not found
+        Controller -> Server: Response 404 (Provider not found)
+        Server -> Admin: Response 404 (Provider not found)
+    end
 end
-@enduml
+@endUML
