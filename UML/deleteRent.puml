@@ -18,9 +18,9 @@ RentModel -> DB: RentSchema
 DB --> RentModel: Return rent data
 RentModel --> Controller: Return rent data
 
-alt Car not found
-    Controller --> Server: Response 404 (Car not found)
-    Server --> Client: Response 404 (Car not found)
+alt Rent not found
+    Controller --> Server: Response 404 (Rent not found)
+    Server --> Client: Response 404 (Rent not found)
 end
 
 Controller -> RentModel: deleteOne(rent_id)
