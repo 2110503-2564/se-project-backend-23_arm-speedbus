@@ -14,6 +14,9 @@ router.route('/:id')
     .delete(protect,authorize('admin','user'),deleteRent);
 
 router.route('/finish/:id')
-    .put(protect,authorize('admin',finishRent));
+    .put(protect,authorize('admin'),finishRent);
+
+
+
 
 module.exports = router;
