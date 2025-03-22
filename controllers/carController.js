@@ -13,7 +13,7 @@ exports.getCars = async (req, res, next) => {
         queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
         query = Car.find(JSON.parse(queryStr)).populate({
             path:'provider_info',
-            select:'name address tel email openTime closeTime'
+            select:'name address tel email openTime closeTime picture'
         });
 
         if (req.query.select) {
@@ -41,7 +41,7 @@ exports.getCar = async (req, res, next) => {
     try {
         const car = await Car.findById(req.params.id).populate({
             path:'provider_info',
-            select:'name address tel email openTime closeTime'
+            select:'name address tel email openTime closeTime picture'
         });
         if(!car){
             return res.status(404).json({success:false,message:`Car with the id ${req.params.id} does not exist`});
