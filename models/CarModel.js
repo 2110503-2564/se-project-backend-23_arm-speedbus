@@ -15,6 +15,10 @@ const CarSchema = new mongoose.Schema({
         ref: 'Provider', 
         required: true 
     },
+    picture: {
+        type: String, 
+        required: true
+    },
     capacity: { 
         type: Number, 
         required: true 
