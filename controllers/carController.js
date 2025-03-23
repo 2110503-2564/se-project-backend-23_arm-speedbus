@@ -97,7 +97,9 @@ exports.updateCar = async (req, res, next) => {
         if(vin_plate){
             const existedCar = await Car.findOne({vin_plate});
             if (existedCar) {
-                return res.status(400).json({success: false, message: `Cannot update! This car with VIN ${vin_plate} is already registered`});
+                if(existedCar._id!=req.params.id){
+                    return res.status(400).json({success: false, message: `Cannot update! This car with VIN ${vin_plate} is already registered`});
+                }
             }
         }
 
