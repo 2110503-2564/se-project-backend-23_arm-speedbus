@@ -78,7 +78,7 @@ exports.createCar = async (req, res, next) => {
         });
         res.status(201).json({success:true,data: car});
     } catch (err) {
-        res.status(400).json({success:false,message:'Cannot create a car'});
+        res.status(400).json({success:false,message:'Cannot create a car. Check if provider id exists in database.'});
     }
 }
 
