@@ -124,7 +124,7 @@ exports.createRent = async (req, res, next) => {
             status: 'confirmed' //Count only confirmed renting. Does not count finished.
         });
         if (existingRents.length >= 3 && req.user.role === "user") {
-            return res.status(400).json({success:false,message:`User ${req.user.id} has already rented 3 cars`});
+            return res.status(400).json({success:false,message:`User ${req.user.name} has already rented 3 cars.`});
         }
         const rent = await Rent.create(req.body);
         await AuditLog.create({
@@ -153,17 +153,17 @@ exports.updateRent = async (req, res, next) => {
         }
         // Make sure user is the rent owner 
         if (rent.user_info.toString() !== req.user.id && req.user.role !== 'admin') {
-            return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to update this rent`});
+            return res.status(401).json({success:false,message:`User ${req.user.name} is not authorized to update this rent`});
         }
         const {car_info,user_info,iDate,startDate,endDate,status} = req.body;
-        if(status){
-            if(req.user.role === 'admin'){
-                return res.status(400).json({success:false,message:'User does not have the right to edit renting status'});
-            }
-            else{
-                return res.status(400).json({success:false,message:`Please redirect http://localhost:5000/api/v1/rents/finish/${req.params.id} in order to update this renting`});
-            }
-        }
+        // if(status){
+        //     if(req.user.role === 'admin'){
+        //         return res.status(400).json({success:false,message:'User does not have the right to edit renting status'});
+        //     }
+        //     else{
+        //         return res.status(400).json({success:false,message:`Please redirect http://localhost:5000/api/v1/rents/finish/${req.params.id} in order to update this renting`});
+        //     }
+        // }
         const start = startDate ? new Date(startDate) : rent.startDate;
         const end = endDate ? new Date(endDate) : rent.endDate;
 
