@@ -7,16 +7,27 @@ const AuditLog = require('../models/AuditLogModel');
 // @access Private
 exports.getRents = async (req, res, next) => {
     let query;
-
     if (req.user.role !== 'admin') {
-        query = Rent.find({user_info: req.user.id}).populate({
-            path: 'car_info',
-            select: 'name vin_plate'
-        })
-        .populate({
-            path: 'user_info',
-            select: 'name'
-        });
+        if(req.params.carId){
+            query = Rent.find({car_info:req.params.carId}).populate({
+                path: 'car_info',
+                select: 'name vin_plate' 
+            })
+            .populate({
+                path: 'user_info',
+                select: 'name'
+            });
+        }
+        else{
+            query = Rent.find({user_info: req.user.id}).populate({
+                path: 'car_info',
+                select: 'name vin_plate'
+            })
+            .populate({
+                path: 'user_info',
+                select: 'name'
+            });
+        }
     } else {
         if(req.params.carId){
             query = Rent.find({car_info:req.params.carId}).populate({
