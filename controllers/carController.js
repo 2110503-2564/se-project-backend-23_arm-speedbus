@@ -58,6 +58,7 @@ exports.getCar = async (req, res, next) => {
 // @access  Provider
 exports.createCar = async (req, res, next) => {
     try {
+        req.body.picture = req.body.picture.replace(/&amp;/g, "&");
         const {name, vin_plate, provider_info, capacity, model, pricePerDay} = req.body;
         //Check if duplicate email address exists
         const existedCar = await Car.findOne({vin_plate});
@@ -89,7 +90,10 @@ exports.createCar = async (req, res, next) => {
 exports.updateCar = async (req, res, next) => {
     try {
         // Check if a car with the provided VIN plate already exists
-        const {name, vin_plate, provider_info, capacity, model, pricePerDay} = req.body;
+        const {name, picture, vin_plate, provider_info, capacity, model, pricePerDay} = req.body;
+        if(picture){
+            req.body.picture = req.body.picture.replace(/&amp;/g, "&");
+        }
         if(vin_plate){
             const existedCar = await Car.findOne({vin_plate});
             if (existedCar) {
