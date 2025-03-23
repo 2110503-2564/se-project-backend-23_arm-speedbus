@@ -73,9 +73,11 @@ exports.updateProvider = async (req, res, next) => {
         if(email){
             const existedProvider = await Provider.findOne({email, _id: {$ne:req.params.id}});
             if (existedProvider) {
-                return res.status(400).json({
-                    success: false,message: `Cannot update! The email ${email} is already registered`,
-                });
+                if(existedProvider._id!=req.params.id){
+                    return res.status(400).json({
+                        success: false,message: `Cannot update! The email ${email} is already registered`,
+                    });
+                }
             }
         }
 
