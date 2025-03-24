@@ -11,7 +11,7 @@ exports.getRents = async (req, res, next) => {
         if(req.params.carId){
             query = Rent.find({car_info:req.params.carId}).populate({
                 path: 'car_info',
-                select: 'name vin_plate' 
+                select: 'name vin_plate pricePerDay' 
             })
             .populate({
                 path: 'user_info',
@@ -21,7 +21,7 @@ exports.getRents = async (req, res, next) => {
         else{
             query = Rent.find({user_info: req.user.id}).populate({
                 path: 'car_info',
-                select: 'name vin_plate'
+                select: 'name vin_plate pricePerDay'
             })
             .populate({
                 path: 'user_info',
@@ -32,7 +32,7 @@ exports.getRents = async (req, res, next) => {
         if(req.params.carId){
             query = Rent.find({car_info:req.params.carId}).populate({
                 path: 'car_info',
-                select: 'name vin_plate' 
+                select: 'name vin_plate pricePerDay' 
             })
             .populate({
                 path: 'user_info',
@@ -42,7 +42,7 @@ exports.getRents = async (req, res, next) => {
         else{
             query = Rent.find().populate({
                 path: 'car_info',
-                select: 'name vin_plate'
+                select: 'name vin_plate pricePerDay'
             })
             .populate({
                 path: 'user_info',
@@ -67,7 +67,7 @@ exports.getRent = async (req, res, next) => {
     try {
         const rent = await Rent.findById(req.params.id).populate({
             path: 'car_info',
-            select: 'name vin_plate'
+            select: 'name vin_plate pricePerDay'
         })
         .populate({
             path: 'user_info',
