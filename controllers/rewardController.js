@@ -3,7 +3,7 @@ const Coupon = require("../models/CouponModel");
 // @desc    Get all rewards
 // @route   GET /api/v1/rewards
 // @access  Private
-exports.getALlRewards = async (req, res, next) => {
+exports.getAllRewards = async (req, res, next) => {
   try {
     const rewards = await Coupon.find();
     res

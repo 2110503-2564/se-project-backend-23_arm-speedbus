@@ -1,6 +1,6 @@
 const express = require("express");
 const {
-  getALlRewards,
+  getAllRewards,
   getOneReward,
   getMyRewards,
   createReward,
@@ -14,7 +14,7 @@ const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  .get(protect, authorize("admin"), getALlRewards)
+  .get(protect, authorize("admin"), getAllRewards)
   .post(protect, authorize("admin"), createReward);
 
 router.route("/user").get(protect, getMyRewards);
