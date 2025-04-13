@@ -23,6 +23,7 @@ const CouponSchema = new mongoose.Schema(
         "Please provide a valid date in yyyy-mm-dd format",
       ],
       default: Date.now,
+      required: true,
     },
     status: {
       type: String,
@@ -35,5 +36,8 @@ const CouponSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+// TTL index: ลบทันทีเมื่อ expirationDate ผ่านไป
+CouponSchema.index({ expirationDate: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("Coupon", CouponSchema);
