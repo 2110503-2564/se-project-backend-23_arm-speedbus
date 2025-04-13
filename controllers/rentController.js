@@ -336,11 +336,6 @@ exports.finishRent = async (req, res, next) => {
     }
     rent = await Rent.findByIdAndUpdate(
       req.params.id,
-      { status: "finished" },
-      { new: true, runValidators: true }
-    );
-    rent = await Rent.findByIdAndUpdate(
-      req.params.id,
       { status: "Finished" },
       { new: true, runValidators: true }
     );
