@@ -67,17 +67,23 @@ exports.getMyRewards = async (req, res, next) => {
 exports.createReward = async (req, res, next) => {
   try {
     // Validate the request body
-    const { user_info, percentage, requirement, expirationDate } = req.body;
+    const { percentage, requirement, expirationDate } = req.body;
 
     if (!user_info || !percentage || !requirement || !expirationDate) {
       return res.status(400).json({
         success: false,
         message:
-          "Please provide all required fields: user_info, percentage, requirement, expirationDate",
+          "Please provide all required fields: percentage, requirement, expirationDate",
       });
     }
 
-    const reward = await Coupon.create(req.body);
+    const reward = await Coupon.create({
+      user_info: req.user._id,
+      percentage,
+      requirement,
+      expirationDate,
+    });
+
     res.status(201).json({ success: true, data: reward });
   } catch (error) {
     console.log(error);
