@@ -108,3 +108,29 @@ exports.updateReward = async (req, res, next) => {
       .json({ success: false, message: "Cannot update Reward" });
   }
 };
+
+// @desc    Delete a reward
+// @route   DELETE /api/v1/rewards/:id
+// @access  Private
+exports.deleteReward = async (req, res, next) => {
+  try {
+    const reward = await Coupon.findById(req.params.id);
+    if (!reward) {
+      return res.status(404).json({
+        success: false,
+        message: `Reward with the id ${req.params.id} does not exist`,
+      });
+    }
+    await Coupon.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      success: true,
+      data: {},
+      message: `Reward with the id of ${req.params.id} has been deleted successfully`,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Cannot delete Reward" });
+  }
+};
