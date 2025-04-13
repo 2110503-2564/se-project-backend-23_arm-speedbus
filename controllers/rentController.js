@@ -145,7 +145,7 @@ exports.createRent = async (req, res, next) => {
     }
     const existingRents = await Rent.find({
       user_info: req.user.id,
-      status: "confirmed", //Count only confirmed renting. Does not count finished.
+      status: "Confirmed", //Count only confirmed renting. Does not count finished.
     });
     if (existingRents.length >= 3 && req.user.role === "user") {
       return res.status(400).json({
@@ -337,6 +337,11 @@ exports.finishRent = async (req, res, next) => {
     rent = await Rent.findByIdAndUpdate(
       req.params.id,
       { status: "finished" },
+      { new: true, runValidators: true }
+    );
+    rent = await Rent.findByIdAndUpdate(
+      req.params.id,
+      { status: "Finished" },
       { new: true, runValidators: true }
     );
     await AuditLog.create({
