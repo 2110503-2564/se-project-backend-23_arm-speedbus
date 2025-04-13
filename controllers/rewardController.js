@@ -3,9 +3,9 @@ const Coupon = require("../models/CouponModel");
 // @desc    Get all rewards
 // @route   GET /api/v1/rewards
 // @access  Private
-exports.getALlRewards = async (req, res, next) => {
+exports.getAllRewards = async (req, res, next) => {
   try {
-    const rewards = await Coupon.find();
+    const rewards = await Coupon.find().sort({ expirationDate: 1, percentage: -1 });
     res
       .status(200)
       .json({ success: true, count: rewards.length, data: rewards });
@@ -46,7 +46,7 @@ exports.getMyRewards = async (req, res, next) => {
   try {
     const userId = req.user._id;
 
-    const rewards = await Coupon.find({ user_info: userId });
+    const rewards = await Coupon.find({ user_info: userId }).sort({ expirationDate: 1, percentage: -1 });
 
     res
       .status(200)
@@ -64,18 +64,23 @@ exports.getMyRewards = async (req, res, next) => {
 // @access  Private
 exports.createReward = async (req, res, next) => {
   try {
-    // Validate the request body
-    const { user_info, percentage, requirement, expirationDate } = req.body;
+    const { percentage, requirement, expirationDate } = req.body;
 
-    if (!user_info || !percentage || !requirement || !expirationDate) {
+    if (!percentage || !requirement || !expirationDate) {
       return res.status(400).json({
         success: false,
         message:
-          "Please provide all required fields: user_info, percentage, requirement, expirationDate",
+          "Please provide all required fields: percentage, requirement, expirationDate",
       });
     }
 
-    const reward = await Coupon.create(req.body);
+    const reward = await Coupon.create({
+      user_info: req.user._id,
+      percentage,
+      requirement,
+      expirationDate,
+    });
+
     res.status(201).json({ success: true, data: reward });
   } catch (error) {
     console.log(error);
