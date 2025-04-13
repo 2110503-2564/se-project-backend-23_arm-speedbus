@@ -1,7 +1,8 @@
 const express = require("express");
 const {
-  getRewards,
-  getReward,
+  getALlRewards,
+  getOneReward,
+  getMyRewards,
   createReward,
   updateReward,
 } = require("../controllers/rewardController");
@@ -12,12 +13,14 @@ const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  //   .get(protect, authorize("admin"), getRewards)
+  .get(protect, authorize("admin"), getALlRewards)
   .post(protect, authorize("admin"), createReward);
+
+router.route("/user").get(protect, getMyRewards);
 
 router
   .route("/:id")
-  //   .get(protect, authorize("admin", "user"), getReward)
+  .get(protect, authorize("admin"), getOneReward)
   .put(protect, authorize("admin"), updateReward);
 
 module.exports = router;

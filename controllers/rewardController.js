@@ -3,48 +3,61 @@ const Coupon = require("../models/CouponModel");
 // @desc    Get all rewards
 // @route   GET /api/v1/rewards
 // @access  Private
-// exports.getRewards() = async (req, res, next) => {
-//     let query;
-//     if (req.user.role !== 'admin'){
-//         // if request role is not admin
-//         /*query = */
-//     }
-//     else {
-//         // if request role is admin
-//         /*query = */
-//     }
+exports.getALlRewards = async (req, res, next) => {
+  try {
+    const rewards = await Coupon.find();
+    res
+      .status(200)
+      .json({ success: true, count: rewards.length, data: rewards });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Cannot retrieve rewards" });
+  }
+};
 
-//     try {
-//         const rents = await query;
-//         res.status(200).json({success:true});
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).json({success:false,message:'Cannot find Rewards'});
-//     }
-// }
-
-// @desc    Get one reward
-// @route   GET /api/v1/reward/:id
+// @desc    Get one reward by ID
+// @route   GET /api/v1/rewards/:id
 // @access  Private
-// exports.getReward() = async (req, res, next) => {
-//     let query;
-//     if (req.user.role !== 'admin'){
-//         // if request role is not admin
-//         /*query = */
-//     }
-//     else {
-//         // if request role is admin
-//         /*query = */
-//     }
+exports.getOneReward = async (req, res, next) => {
+  try {
+    const reward = await Coupon.findById(req.params.id);
+    if (!reward) {
+      return res.status(404).json({
+        success: false,
+        message: `Reward with ID ${req.params.id} not found`,
+      });
+    }
 
-//     try {
-//         const rents = await query;
-//         res.status(200).json({success:true});
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).json({success:false,message:'Cannot find Reward'});
-//     }
-// }
+    res.status(200).json({ success: true, data: reward });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Cannot retrieve reward" });
+  }
+};
+
+// @desc    Get rewards for the current user
+// @route   GET /api/v1/rewards/user
+// @access  Private
+exports.getMyRewards = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+
+    const rewards = await Coupon.find({ user_info: userId });
+
+    res
+      .status(200)
+      .json({ success: true, count: rewards.length, data: rewards });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Cannot retrieve user rewards" });
+  }
+};
 
 // @desc    Create a reward
 // @route   POST /api/v1/rewards
