@@ -3,6 +3,11 @@ const Car = require("../models/CarModel");
 const User = require("../models/UserModel");
 const AuditLog = require("../models/AuditLogModel");
 
+function getTotalDays(start, end) {
+    const diffMs = new Date(end).getTime() - new Date(start).getTime();
+    return (diffMs / (1000 * 60 * 60 * 24)) + 1;
+}
+
 // @desc   Get all rents
 // @route  GET /api/v1/rents
 // @access Private
@@ -153,6 +158,8 @@ exports.createRent = async (req, res, next) => {
         message: `User ${req.user.name} has already rented 3 cars.`,
       });
     }
+    req.body.totalDays=getTotalDays(start,end);
+    req.body.totalPrice=car.pricePerDay*req.body.totalDays;
     const rent = await Rent.create(req.body);
     await AuditLog.create({
       action: "Create",
@@ -213,51 +220,56 @@ exports.updateRent = async (req, res, next) => {
     let carUpdated = false;
     // If the car is changed
     if (car_info && car_info !== rent.car_info) {
-      const newCarStartDate = startDate ? new Date(startDate) : rent.startDate;
-      const newCarEndDate = endDate ? new Date(endDate) : rent.endDate;
-      // Check if the new car has any overlapping rentals
-      const overlappingCarRents = await Rent.find({
-        _id: { $ne: rent._id }, // Exclude the current rent being updated
-        car_info: car_info, // Check for the new car
-        $or: [
-          {
-            startDate: { $lte: newCarEndDate },
-            endDate: { $gte: newCarStartDate },
-          }, // Check time overlapping
-        ],
-      });
-      if (overlappingCarRents.length > 0) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "The selected rental period overlaps with an existing rental for the new car",
+        const newCarStartDate = startDate ? new Date(startDate) : rent.startDate;
+        const newCarEndDate = endDate ? new Date(endDate) : rent.endDate;
+        // Check if the new car has any overlapping rentals
+        const overlappingCarRents = await Rent.find({
+            _id: { $ne: rent._id }, // Exclude the current rent being updated
+            car_info: car_info, // Check for the new car
+            $or: [
+                {
+                    startDate: { $lte: newCarEndDate },
+                    endDate: { $gte: newCarStartDate },
+                }, // Check time overlapping
+            ],
         });
-      }
-      // If no overlap, update the car_info
-      rent.car_info = car_info;
-      carUpdated = true;
+        if (overlappingCarRents.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message:
+                "The selected rental period overlaps with an existing rental for the new car",
+            });
+        }
+        // If no overlap, update the car_info
+        req.body.car_info = car_info;
+        carUpdated = true;
     }
     // If startDate or endDate is changed
     if ((startDate || endDate) && !carUpdated) {
-      const newStartDate = startDate ? new Date(startDate) : rent.startDate;
-      const newEndDate = endDate ? new Date(endDate) : rent.endDate;
-      //Check time overlapping
-      const overlappingCarRents = await Rent.find({
-        _id: { $ne: rent._id }, // Exclude the current rent being updated
-        car_info: rent.car_info,
-        $or: [
-          { startDate: { $lte: newEndDate }, endDate: { $gte: newStartDate } }, // Check time overlapping
-        ],
-      });
-      if (overlappingCarRents.length > 0) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "The selected rental period overlaps with an existing rental for this car",
+        const newStartDate = startDate ? new Date(startDate) : rent.startDate;
+        const newEndDate = endDate ? new Date(endDate) : rent.endDate;
+        //Check time overlapping
+        const overlappingCarRents = await Rent.find({
+            _id: { $ne: rent._id }, // Exclude the current rent being updated
+            car_info: rent.car_info,
+            $or: [
+                { startDate: { $lte: newEndDate }, endDate: { $gte: newStartDate } }, // Check time overlapping
+            ],
         });
-      }
+        if (overlappingCarRents.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message:
+                "The selected rental period overlaps with an existing rental for this car",
+            });
+        }
     }
     // Update rent
+    const carID = car_info ? car_info : rent.car_info;
+    const car = await Car.findById(carID);
+    console.log(car)
+    req.body.totalDays=getTotalDays(start,end);
+    req.body.totalPrice=req.body.totalDays*car.pricePerDay;
     rent = await Rent.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
