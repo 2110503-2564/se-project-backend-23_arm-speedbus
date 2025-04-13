@@ -3,9 +3,9 @@ const Coupon = require("../models/CouponModel");
 // @desc    Get all rewards
 // @route   GET /api/v1/rewards
 // @access  Private
-exports.getALlRewards = async (req, res, next) => {
+exports.getAllRewards = async (req, res, next) => {
   try {
-    const rewards = await Coupon.find();
+    const rewards = await Coupon.find().sort({ expirationDate: 1 });
     res
       .status(200)
       .json({ success: true, count: rewards.length, data: rewards });
@@ -46,7 +46,9 @@ exports.getMyRewards = async (req, res, next) => {
   try {
     const userId = req.user._id;
 
-    const rewards = await Coupon.find({ user_info: userId });
+    const rewards = await Coupon.find({ user_info: userId }).sort({
+      expirationDate: 1,
+    });
 
     res
       .status(200)
