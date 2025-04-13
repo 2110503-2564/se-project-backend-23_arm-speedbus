@@ -27,11 +27,24 @@ const RentSchema = new mongoose.Schema({
         match: [/^\d{4}-\d{2}-\d{2}$/, 'Please provide a valid date in yyyy-mm-dd format'],
         required: true 
     },
+    totalDays: {
+        type: Number,
+        required: true
+    },
+    totalPrice: {
+        type: Number,
+        required: true
+    },
     status: {
         type: String,
         enum: ['Confirmed','Finished'],
         default: 'Confirmed'
     }
-});
+},
+    {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    }
+);
 
 module.exports = mongoose.model('Rent', RentSchema);
