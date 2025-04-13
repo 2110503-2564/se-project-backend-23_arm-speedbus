@@ -29,8 +29,8 @@ const RentSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['confirmed','finished'],
-        default: 'confirmed'
+        enum: ['Confirmed','Finished'],
+        default: 'Confirmed'
     }
 });
 

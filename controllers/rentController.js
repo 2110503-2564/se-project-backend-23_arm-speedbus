@@ -121,7 +121,7 @@ exports.createRent = async (req, res, next) => {
         }
         const existingRents = await Rent.find({
             user_info: req.user.id,
-            status: 'confirmed' //Count only confirmed renting. Does not count finished.
+            status: 'Confirmed' //Count only confirmed renting. Does not count finished.
         });
         if (existingRents.length >= 3 && req.user.role === "user") {
             return res.status(400).json({success:false,message:`User ${req.user.name} has already rented 3 cars.`});
@@ -261,7 +261,7 @@ exports.finishRent = async (req, res, next) => {
         if (!rent) {
             return res.status(404).json({success:false,message:`No rent with the id of ${req.params.id}`});
         }
-        rent = await Rent.findByIdAndUpdate(req.params.id,{status:'finished'},{new: true,runValidators: true});
+        rent = await Rent.findByIdAndUpdate(req.params.id,{status:'Finished'},{new: true,runValidators: true});
         await AuditLog.create({
             action:'Update',
             user_id:req.user._id,
