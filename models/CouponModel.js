@@ -12,8 +12,16 @@ const CouponSchema = new mongoose.Schema(
       required: true,
     },
     // date will be YYYY-MM-DD format, time will default in 00:00:00
-    requirement: {
+    name: {
       type: String,
+      required: true,
+    },
+    minDiscount: {
+      type: Number,
+      required: true,
+    },
+    minSpent: {
+      type: Number,
       required: true,
     },
     expirationDate: {
