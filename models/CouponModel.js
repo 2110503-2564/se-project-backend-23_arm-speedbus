@@ -20,7 +20,7 @@ const CouponSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    minSpent: {
+    minSpend: {
       type: Number,
       required: true,
     },
