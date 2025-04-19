@@ -6,6 +6,7 @@ const {
   createCoupon,
   updateCoupon,
   deleteCoupon,
+  deleteExpiredCoupons,
 } = require("../controllers/couponController");
 
 const { protect, authorize } = require("../middleware/auth");
@@ -18,6 +19,9 @@ router
   .post(protect, authorize("admin", "user"), createCoupon);
 
 router.route("/user").get(protect, getMyCoupons);
+router
+  .route("/expired")
+  .delete(protect, authorize("admin"), deleteExpiredCoupons);
 
 router
   .route("/:id")

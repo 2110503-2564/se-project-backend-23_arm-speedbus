@@ -71,7 +71,8 @@ exports.getMyCoupons = async (req, res, next) => {
 exports.createCoupon = async (req, res, next) => {
   try {
     // Validate the request body
-    const {percentage, name, maxDiscount, minSpend, expirationDate } = req.body;
+    const { percentage, name, maxDiscount, minSpend, expirationDate } =
+      req.body;
 
     if (!percentage || !name || !maxDiscount || !minSpend || !expirationDate) {
       return res.status(400).json({
@@ -146,5 +147,26 @@ exports.deleteCoupon = async (req, res, next) => {
     return res
       .status(500)
       .json({ success: false, message: "Cannot delete coupon" });
+  }
+};
+
+// @desc    Delete a expired coupons
+// @route   DELETE /api/v1/coupons/expired
+// @access  Private
+exports.deleteExpiredCoupons = async (req, res, next) => {
+  try {
+    const currentDate = new Date();
+    const result = await Coupon.deleteMany({
+      expirationDate: { $lt: currentDate },
+    });
+    res.status(200).json({
+      success: true,
+      message: `${result.deletedCount} expired coupons deleted`,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Cannot delete expired coupons" });
   }
 };

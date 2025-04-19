@@ -46,6 +46,6 @@ const CouponSchema = new mongoose.Schema(
 );
 
 // TTL index: ลบทันทีเมื่อ expirationDate ผ่านไป
-CouponSchema.index({ expirationDate: 1 }, { expireAfterSeconds: 0 });
+// CouponSchema.index({ expirationDate: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("Coupon", CouponSchema);
