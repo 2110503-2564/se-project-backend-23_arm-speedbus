@@ -50,7 +50,7 @@ const RentSchema = new mongoose.Schema(
       enum: ["Confirmed", "Finished"],
       default: "Confirmed",
     },
-    InclusionForCalculation: {
+    inclusionForCalculation: {
       type: String,
       enum: ["Included", "Excluded"],
       default: "Included",

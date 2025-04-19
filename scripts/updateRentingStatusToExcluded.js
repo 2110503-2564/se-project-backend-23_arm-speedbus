@@ -10,7 +10,7 @@ async function updateRentingStatusToExcluded() {
     // อัปเดตทุก renting ให้เป็น 'Excluded'
     await Rent.updateMany(
       {}, // อัปเดตทุกเรคคอร์ด
-      { $set: { InclusionForCalculation: "Excluded" } } // เปลี่ยนค่า InclusionForCalculation เป็น 'Excluded'
+      { $set: { inclusionForCalculation: "Excluded" } } // เปลี่ยนค่า inclusionForCalculation เป็น 'Excluded'
     );
     console.log("All renting records have been updated to Excluded");
 
