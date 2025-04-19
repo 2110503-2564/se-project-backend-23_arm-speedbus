@@ -294,7 +294,7 @@ exports.updateRent = async (req, res, next) => {
     const oldUserTotalPayment = user.totalPayment;
     console.log(user.name)
     req.body.totalDays=getTotalDays(start,end);
-    req.body.totalPrice=req.body.totalDays*car.pricePerDay;
+    req.body.totalPrice=calculateValueAfterDiscount(req.body.totalDays*car.pricePerDay,rent.discount);
     await User.updateOne({ _id: rent.user_info }, { totalPayment: oldUserTotalPayment - oldRentTotalPrice + req.body.totalPrice});
     console.log(oldUserTotalPayment+','+oldRentTotalPrice+','+req.body.totalPrice);
     rent = await Rent.findByIdAndUpdate(req.params.id, req.body, {
