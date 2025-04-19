@@ -39,7 +39,7 @@ async function initiateTotalDaysAndPrice() {
     for (const rent of rents) {
       if (rent.startDate && rent.endDate && rent.car_info?.pricePerDay) {
         rent.totalDays = getTotalDays(rent.startDate, rent.endDate);
-        rent.totalPrice = rent.totalDays * rent.car_info.pricePerDay;
+        rent.totalPrice = calculateValueAfterDiscount(rent.totalDays * rent.car_info.pricePerDay,rent.discount);
         await rent.save();
         console.log(
           `Updated rent ${rent._id}: ${rent.totalDays} days, $${rent.totalPrice}`
