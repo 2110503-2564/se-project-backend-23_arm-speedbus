@@ -160,6 +160,9 @@ exports.createRent = async (req, res, next) => {
     }
     req.body.totalDays=getTotalDays(start,end);
     req.body.totalPrice=car.pricePerDay*req.body.totalDays;
+    const user = await User.findOne({ _id: user_info });
+    const oldUserTotalPayment = user.totalPayment;
+    await User.updateOne({ _id: user_info }, { totalPayment: oldUserTotalPayment+req.body.totalPrice });
     const rent = await Rent.create(req.body);
     await AuditLog.create({
       action: "Create",
