@@ -35,6 +35,7 @@ const rentRoute = require("./routes/rentRoute");
 const providerRoute = require("./routes/providerRoute");
 const auditLogRoute = require("./routes/auditLogRoute");
 const couponRoute = require("./routes/couponRoute");
+const couponTemplateRoute = require("./routes/couponTemplateRoute");
 
 app.use("/api/v1/auditlogs", auditLogRoute);
 app.use("/api/v1/providers", providerRoute);
@@ -42,6 +43,7 @@ app.use("/api/v1/cars", carRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/rents", rentRoute);
 app.use("/api/v1/coupons", couponRoute);
+app.use("/api/v1/coupon-templates", couponTemplateRoute);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(
