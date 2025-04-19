@@ -9,7 +9,7 @@ function getTotalDays(start, end) {
 }
 
 function calculateValueAfterDiscount(val,percentage){
-    const reduced = val*percentage/100
+    let reduced = val*percentage/100
     if(percentage==10){
       reduced = Math.min(100,reduced);
     }

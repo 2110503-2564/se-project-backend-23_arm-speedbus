@@ -10,6 +10,23 @@ function getTotalDays(start, end) {
   return diffMs / (1000 * 60 * 60 * 24) + 1;
 }
 
+function calculateValueAfterDiscount(val,percentage){
+  let reduced = val*percentage/100
+  if(percentage==10){
+    reduced = Math.min(100,reduced);
+  }
+  else if(percentage==15){
+    reduced = reduced = Math.min(200,reduced);
+  }
+  else if(percentage==20){
+    reduced = reduced = Math.min(300,reduced);
+  }
+  else if(percentage==25){
+    reduced = reduced = Math.min(400,reduced);
+  }
+  return val-reduced;
+}
+
 async function initiateTotalDaysAndPrice() {
   try {
     await connectDB();
@@ -96,6 +113,26 @@ async function initiateDiscountForOldRents() {
   }
 }
 
+async function recalculateRentAfterDiscount() {
+  try {
+    await connectDB();
+    const rents = await Rent.find();
+    for (const rent of rents){
+      rent.totalPrice=calculateValueAfterDiscount(rent.totalPrice,rent.discount);
+      await rent.save();
+      console.log(
+        `Updated rent ${rent._id}: discount : ${rent.discount} total : ${rent.totalPrice}`
+      );
+    }
+    await mongoose.disconnect();
+    console.log('MongoDB disconnected');
+  } catch (err) {
+    console.error('Error during update:', err);
+    process.exit(1);
+  }
+}
+
 // initiateTotalDaysAndPrice();
 // initiateTotalPaymentForAllUsers();
 // initiateDiscountForOldRents();
+// recalculateRentAfterDiscount();
