@@ -160,7 +160,7 @@ exports.createRent = async (req, res, next) => {
     }
     req.body.totalDays=getTotalDays(start,end);
     req.body.totalPrice=car.pricePerDay*req.body.totalDays;
-    const user = await User.findOne({ _id: user_info });
+    const user = await User.findById(user_info);
     const oldUserTotalPayment = user.totalPayment;
     await User.updateOne({ _id: user_info }, { totalPayment: oldUserTotalPayment+req.body.totalPrice });
     const rent = await Rent.create(req.body);
@@ -202,6 +202,7 @@ exports.updateRent = async (req, res, next) => {
         message: `User ${req.user.name} is not authorized to update this rent`,
       });
     }
+    const oldRentTotalPrice = rent.totalPrice;
     const { car_info, user_info, iDate, startDate, endDate, status } = req.body;
     // if(status){
     //     if(req.user.role === 'admin'){
@@ -270,9 +271,13 @@ exports.updateRent = async (req, res, next) => {
     // Update rent
     const carID = car_info ? car_info : rent.car_info;
     const car = await Car.findById(carID);
-    console.log(car)
+    const user = await User.findById(rent.user_info);
+    const oldUserTotalPayment = user.totalPayment;
+    console.log(user.name)
     req.body.totalDays=getTotalDays(start,end);
     req.body.totalPrice=req.body.totalDays*car.pricePerDay;
+    await User.updateOne({ _id: rent.user_info }, { totalPayment: oldUserTotalPayment - oldRentTotalPrice + req.body.totalPrice});
+    console.log(oldUserTotalPayment+','+oldRentTotalPrice+','+req.body.totalPrice);
     rent = await Rent.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -316,6 +321,10 @@ exports.deleteRent = async (req, res, next) => {
       });
     }
     const rentId = req.params.id;
+    const user = await User.findById(rent.user_info);
+    const oldUserTotalPayment = user.totalPayment;
+    await User.updateOne({ _id: user._id }, { totalPayment: oldUserTotalPayment-rent.totalPrice });
+    
     await Rent.findByIdAndDelete(req.params.id);
     await AuditLog.create({
       action: "Delete",
