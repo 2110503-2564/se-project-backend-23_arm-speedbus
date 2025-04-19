@@ -29,7 +29,7 @@ exports.getOneCoupon = async (req, res, next) => {
     if (!coupon) {
       return res.status(404).json({
         success: false,
-        message: `coupon with ID ${req.params.id} not found`,
+        message: `Coupon with ID ${req.params.id} not found`,
       });
     }
 
@@ -109,7 +109,7 @@ exports.updateCoupon = async (req, res, next) => {
     if (!coupon) {
       return res.status(404).json({
         success: false,
-        message: `coupon with the id ${req.params.id} does not exist`,
+        message: `Coupon with the id ${req.params.id} does not exist`,
       });
     }
     res.status(200).json({ success: true, data: coupon });
@@ -130,14 +130,14 @@ exports.deleteCoupon = async (req, res, next) => {
     if (!coupon) {
       return res.status(404).json({
         success: false,
-        message: `coupon with the id ${req.params.id} does not exist`,
+        message: `Coupon with the id ${req.params.id} does not exist`,
       });
     }
     await Coupon.findByIdAndDelete(req.params.id);
     res.status(200).json({
       success: true,
       data: {},
-      message: `coupon with the id of ${req.params.id} has been deleted successfully`,
+      message: `Coupon with the id of ${req.params.id} has been deleted successfully`,
     });
   } catch (error) {
     console.log(error);
