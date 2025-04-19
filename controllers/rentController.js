@@ -130,7 +130,7 @@ exports.getRent = async (req, res, next) => {
 // @access Private
 exports.createRent = async (req, res, next) => {
   try {
-    const { user_info, iDate, startDate, endDate, status } = req.body;
+    const { user_info, discount, iDate, startDate, endDate, status } = req.body;
     req.body.car_info = req.params.carId;
     const car_info = req.body.car_info;
     //req.body.user_info = req.user.id;
