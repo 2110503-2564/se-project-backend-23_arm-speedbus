@@ -14,7 +14,7 @@ const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  .get(getAllRewards)
+  .get(protect, authorize("admin"), getAllRewards)
   .post(protect, authorize("admin", "user"), createReward);
 
 router.route("/user").get(protect, getMyRewards);
