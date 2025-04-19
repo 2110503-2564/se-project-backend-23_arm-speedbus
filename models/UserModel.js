@@ -36,6 +36,9 @@ const UserSchema = new mongoose.Schema({
   totalPayment: {
     type: Number,
     default: 0,
+  },totalPaymentThisYear: {
+    type: Number,
+    default: 0,
   },
   createdAt: {
     type: Date,

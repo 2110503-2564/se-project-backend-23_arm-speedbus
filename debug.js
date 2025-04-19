@@ -132,7 +132,31 @@ async function recalculateRentAfterDiscount() {
   }
 }
 
+async function calculateTotalPaymentThisYearForAllUser() {
+  try {
+    await connectDB();
+    const rents = await Rent.find();
+    const users = await User.find();
+    for (const user of users) {
+      let sum = 0;
+      for (const rent of rents) {
+        if (user._id.equals(rent.user_info) && rent.inclusionForCalculation === "Included") {
+          sum += rent.totalPrice;
+        }
+      }
+      await User.updateOne({_id : user._id} , {totalPaymentThisYear : sum});
+      console.log(`After Updated payment this year to ${user.totalPaymentThisYear}`)
+    }
+    await mongoose.disconnect();
+    console.log('MongoDB disconnected');
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
+}
+
 // initiateTotalDaysAndPrice();
 // initiateTotalPaymentForAllUsers();
 // initiateDiscountForOldRents();
 // recalculateRentAfterDiscount();
+//calculateTotalPaymentThisYearForAllUser();
