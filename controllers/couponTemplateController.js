@@ -108,10 +108,10 @@ exports.deleteCouponTemplate = async (req, res, next) => {
       });
     }
 
-    await couponTemplate.remove();
-
+    await CouponTemplate.findByIdAndDelete(req.params.id);
     res.status(200).json({
       success: true,
+      data: {},
       message: "CouponTemplate deleted successfully",
     });
   } catch (error) {
