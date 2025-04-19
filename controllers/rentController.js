@@ -8,6 +8,23 @@ function getTotalDays(start, end) {
     return (diffMs / (1000 * 60 * 60 * 24)) + 1;
 }
 
+function calculateValueAfterDiscount(val,percentage){
+    const reduced = val*percentage/100
+    if(percentage==10){
+      reduced = Math.min(100,reduced);
+    }
+    else if(percentage==15){
+      reduced = reduced = Math.min(200,reduced);
+    }
+    else if(percentage==20){
+      reduced = reduced = Math.min(300,reduced);
+    }
+    else if(percentage==25){
+      reduced = reduced = Math.min(400,reduced);
+    }
+    return val-reduced;
+}
+
 // @desc   Get all rents
 // @route  GET /api/v1/rents
 // @access Private
