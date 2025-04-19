@@ -16,7 +16,7 @@ const CouponSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    minDiscount: {
+    maxDiscount: {
       type: Number,
       required: true,
     },
