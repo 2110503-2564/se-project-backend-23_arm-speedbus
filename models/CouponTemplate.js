@@ -19,7 +19,7 @@ const CouponTemplateSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    Spent: {
+    valid: {
       type: Number,
       required: true,
     },
