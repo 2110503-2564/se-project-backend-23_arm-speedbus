@@ -19,6 +19,10 @@ const CouponTemplateSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    Spend: {
+      type: Number,
+      required: true,
+    },
   },
   {
     toJSON: { virtuals: true },
