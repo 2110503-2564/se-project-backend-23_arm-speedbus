@@ -71,20 +71,22 @@ exports.getMyCoupons = async (req, res, next) => {
 exports.createCoupon = async (req, res, next) => {
   try {
     // Validate the request body
-    const { percentage, requirement, expirationDate } = req.body;
+    const {percentage, name, maxDiscount, minSpend, expirationDate } = req.body;
 
-    if (!percentage || !requirement || !expirationDate) {
+    if (!percentage || !name || !maxDiscount || !minSpend || !expirationDate) {
       return res.status(400).json({
         success: false,
         message:
-          "Please provide all required fields: percentage, requirement, expirationDate",
+          "Please provide all required fields: percentage, name, maxDiscount, minSpend, expirationDate",
       });
     }
 
     const coupon = await Coupon.create({
       user_info: req.user._id,
       percentage,
-      requirement,
+      name,
+      maxDiscount,
+      minSpend,
       expirationDate,
     });
 
