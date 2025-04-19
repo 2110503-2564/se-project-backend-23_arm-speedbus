@@ -75,5 +75,27 @@ async function initiateTotalPaymentForAllUsers() {
   }
 }
 
+async function initiateDiscountForOldRents() {
+  try {
+    await connectDB();
+    const rents = await Rent.find();
+    for (const rent of rents){
+      if(!rent.discount){
+        rent.discount=0;
+        await rent.save();
+        console.log(
+          `Updated rent ${rent._id}: discount : ${rent.discount}`
+        );
+      }
+    }
+    await mongoose.disconnect();
+    console.log('MongoDB disconnected');
+  } catch (err) {
+    console.error('Error during update:', err);
+    process.exit(1);
+  }
+}
+
 // initiateTotalDaysAndPrice();
-initiateTotalPaymentForAllUsers()
+// initiateTotalPaymentForAllUsers();
+// initiateDiscountForOldRents();

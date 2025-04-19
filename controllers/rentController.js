@@ -176,7 +176,9 @@ exports.createRent = async (req, res, next) => {
       });
     }
     req.body.totalDays=getTotalDays(start,end);
-    req.body.totalPrice=car.pricePerDay*req.body.totalDays;
+    req.body.totalPrice=calculateValueAfterDiscount(car.pricePerDay*req.body.totalDays,discount);
+    console.log(req.body.discount)
+    console.log(req.body.totalPrice)
     const user = await User.findById(user_info);
     const oldUserTotalPayment = user.totalPayment;
     await User.updateOne({ _id: user_info }, { totalPayment: oldUserTotalPayment+req.body.totalPrice });
