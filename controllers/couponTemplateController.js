@@ -26,10 +26,10 @@ exports.getAllCouponTemplates = async (req, res, next) => {
 // @access  Private
 exports.createCouponTemplate = async (req, res, next) => {
   try {
-    const { percentage, name, maxDiscount, minSpend, spent, valid } = req.body;
+    const { percentage, name, maxDiscount, minSpend, spent } = req.body;
 
     // ตรวจสอบว่ามีข้อมูลทั้งหมดหรือไม่
-    if (!percentage || !name || !maxDiscount || !minSpend || !spent || !valid) {
+    if (!percentage || !name || !maxDiscount || !minSpend || !spent) {
       return res.status(400).json({
         success: false,
         message: "Please provide all required fields",
@@ -42,7 +42,6 @@ exports.createCouponTemplate = async (req, res, next) => {
       maxDiscount,
       minSpend,
       spent,
-      valid,
     });
 
     await newCouponTemplate.save();
@@ -75,13 +74,12 @@ exports.updateCouponTemplate = async (req, res, next) => {
     }
 
     // อัปเดตข้อมูลใหม่จาก body ที่ส่งมา
-    const { percentage, name, maxDiscount, minSpend, spent, valid } = req.body;
+    const { percentage, name, maxDiscount, minSpend, spent } = req.body;
     couponTemplate.percentage = percentage || couponTemplate.percentage;
     couponTemplate.name = name || couponTemplate.name;
     couponTemplate.maxDiscount = maxDiscount || couponTemplate.maxDiscount;
     couponTemplate.minSpend = minSpend || couponTemplate.minSpend;
     couponTemplate.spent = spent || couponTemplate.spent;
-    couponTemplate.valid = valid || couponTemplate.valid;
 
     await couponTemplate.save();
 
