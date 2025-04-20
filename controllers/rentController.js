@@ -179,17 +179,23 @@ exports.createRent = async (req, res, next) => {
     );
     console.log(req.body.discount);
     console.log(req.body.totalPrice);
+
     const user = await User.findById(user_info);
     const oldUserTotalPayment = user.totalPayment;
     const oldUserTotalPaymentThisYear = user.totalPaymentThisYear;
+    const newTotalPayment = oldUserTotalPayment + req.body.totalPrice;
+    const newTotalPaymentThisYear =
+      oldUserTotalPaymentThisYear + req.body.totalPrice;
     await User.updateOne(
       { _id: user_info },
       {
-        totalPayment: oldUserTotalPayment + req.body.totalPrice,
-        totalPaymentThisYear: oldUserTotalPaymentThisYear + req.body.totalPrice,
+        totalPayment: newTotalPayment,
+        totalPaymentThisYear: newTotalPaymentThisYear,
       }
     );
+    console.log("totalpayment this year = ", user.totalPaymentThisYear);
     const rent = await Rent.create(req.body);
+
     await AuditLog.create({
       action: "Create",
       user_id: req.user._id,
@@ -301,23 +307,33 @@ exports.updateRent = async (req, res, next) => {
     const oldUserTotalPayment = user.totalPayment;
     const oldUserTotalPaymentThisYear = user.totalPaymentThisYear;
     console.log(user.name);
-    req.body.totalDays = getTotalDays(start, end);
-    req.body.totalPrice = calculateValueAfterDiscount(
-      req.body.totalDays * car.pricePerDay,
-      rent.discount
-    );
-    await User.updateOne(
-      { _id: rent.user_info },
-      {
-        totalPayment:
-          oldUserTotalPayment - oldRentTotalPrice + req.body.totalPrice,
-        totalPaymentThisYear:
-          oldUserTotalPaymentThisYear - oldRentTotalPrice + req.body.totalPrice,
-      }
-    );
-    console.log(
-      oldUserTotalPayment + "," + oldRentTotalPrice + "," + req.body.totalPrice
-    );
+
+    if (rent.inclusionForCalculation == "Included") {
+      req.body.totalDays = getTotalDays(start, end);
+      req.body.totalPrice = calculateValueAfterDiscount(
+        req.body.totalDays * car.pricePerDay,
+        rent.discount
+      );
+      await User.updateOne(
+        { _id: rent.user_info },
+        {
+          totalPayment:
+            oldUserTotalPayment - oldRentTotalPrice + req.body.totalPrice,
+          totalPaymentThisYear:
+            oldUserTotalPaymentThisYear -
+            oldRentTotalPrice +
+            req.body.totalPrice,
+        }
+      );
+      console.log(
+        oldUserTotalPayment +
+          "," +
+          oldRentTotalPrice +
+          "," +
+          req.body.totalPrice
+      );
+    }
+
     rent = await Rent.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -360,17 +376,20 @@ exports.deleteRent = async (req, res, next) => {
         message: `User ${req.user.id} is not authorized to delete this rent`,
       });
     }
+
     const rentId = req.params.id;
-    const user = await User.findById(rent.user_info);
-    const oldUserTotalPayment = user.totalPayment;
-    const oldRentTotalPriceThisYear = user.totalPaymentThisYear;
-    await User.updateOne(
-      { _id: user._id },
-      {
-        totalPayment: oldUserTotalPayment - rent.totalPrice,
-        totalPayment: oldRentTotalPriceThisYear - rent.totalPrice,
-      }
-    );
+    if (rent.inclusionForCalculation == "Included") {
+      const user = await User.findById(rent.user_info);
+      const oldUserTotalPayment = user.totalPayment;
+      const oldUserTotalPriceThisYear = user.totalPaymentThisYear;
+      await User.updateOne(
+        { _id: user._id },
+        {
+          totalPayment: oldUserTotalPayment - rent.totalPrice,
+          totalPaymentThisYear: oldUserTotalPriceThisYear - rent.totalPrice,
+        }
+      );
+    }
 
     await Rent.findByIdAndDelete(req.params.id);
     await AuditLog.create({

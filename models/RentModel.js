@@ -45,10 +45,20 @@ const RentSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    couponName: {
+      type: String,
+      required: true,
+      default: "No coupon applied",
+    },
     discount: {
         type: Number,
         required: true,
         default: 0,
+    },
+    maxDiscount: {
+      type: Number,
+      required: true,
+      default: 0,
     },
     status: {
       type: String,
