@@ -10,7 +10,7 @@ async function updateRedeemCouponStatusInUser() {
     // อัปเดตทุก user ให้เป็น false
     await User.updateMany(
       {}, // อัปเดตทุกเรคคอร์ด
-      { $set: { RedeemCouponStatus: [false, false, false, false] } } // เปลี่ยนค่า stausCouponRedeem เป็น [false, false, false, false]
+      { $set: { redeemCouponStatus: [false, false, false, false] } } // เปลี่ยนค่า stausCouponRedeem เป็น [false, false, false, false]
     );
     console.log(
       "All user records have been updated to [false, false, false, false]"

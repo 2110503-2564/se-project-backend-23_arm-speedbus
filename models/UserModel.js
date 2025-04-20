@@ -41,7 +41,7 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  RedeemCouponStatus: {
+  redeemCouponStatus: {
     type: Array,
     default: [false, false, false, false],
   },
