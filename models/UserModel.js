@@ -36,9 +36,14 @@ const UserSchema = new mongoose.Schema({
   totalPayment: {
     type: Number,
     default: 0,
-  },totalPaymentThisYear: {
+  },
+  totalPaymentThisYear: {
     type: Number,
     default: 0,
+  },
+  RedeemCouponStatus: {
+    type: Array,
+    default: [false, false, false, false],
   },
   createdAt: {
     type: Date,
