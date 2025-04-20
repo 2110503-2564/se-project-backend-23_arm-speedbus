@@ -159,4 +159,4 @@ async function calculateTotalPaymentThisYearForAllUser() {
 // initiateTotalPaymentForAllUsers();
 // initiateDiscountForOldRents();
 // recalculateRentAfterDiscount();
-//calculateTotalPaymentThisYearForAllUser();
+// calculateTotalPaymentThisYearForAllUser();
