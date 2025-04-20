@@ -1,1 +1,0 @@
-await mongoose.connectDB();
