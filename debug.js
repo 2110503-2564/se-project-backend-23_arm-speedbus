@@ -152,10 +152,18 @@ async function calculateTotalPaymentThisYearForAllUser() {
           sum += rent.totalPrice;
         }
       }
+<<<<<<< HEAD
       await User.updateOne({ _id: user._id }, { totalPaymentThisYear: sum });
       console.log(
         `After Updated payment this year to ${user.totalPaymentThisYear}`
       );
+||||||| 7f80c90
+      await User.updateOne({_id : user._id} , {totalPaymentThisYear : sum});
+      console.log(`After Updated payment this year to ${user.totalPaymentThisYear}`)
+=======
+      await User.updateOne({_id : user._id} , {totalPaymentThisYear : sum});
+      console.log(`After Updated payment this year ${user._id} to ${user.totalPaymentThisYear}`)
+>>>>>>> 1ea9265e98d0befa2445ea517e3a58acfe693bfc
     }
     await mongoose.disconnect();
     console.log("MongoDB disconnected");
