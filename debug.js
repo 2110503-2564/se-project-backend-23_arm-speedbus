@@ -145,7 +145,7 @@ async function calculateTotalPaymentThisYearForAllUser() {
         }
       }
       await User.updateOne({_id : user._id} , {totalPaymentThisYear : sum});
-      console.log(`After Updated payment this year to ${user.totalPaymentThisYear}`)
+      console.log(`After Updated payment this year ${user._id} to ${user.totalPaymentThisYear}`)
     }
     await mongoose.disconnect();
     console.log('MongoDB disconnected');
