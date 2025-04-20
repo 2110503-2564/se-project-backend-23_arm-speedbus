@@ -182,7 +182,10 @@ exports.createRent = async (req, res, next) => {
     const user = await User.findById(user_info);
     const oldUserTotalPayment = user.totalPayment;
     const oldUserTotalPaymentThisYear = user.totalPaymentThisYear;
-    await User.updateOne({ _id: user_info }, { totalPayment: oldUserTotalPayment+req.body.totalPrice ,totalPaymentThisYear: oldUserTotalPaymentThisYear+req.body.totalPrice});
+    const newTotalPayment = oldUserTotalPayment+req.body.totalPrice;
+    const newTotalPaymentThisYear = oldUserTotalPaymentThisYear+req.body.totalPrice;
+    await User.updateOne({ _id: user_info }, { totalPayment: newTotalPayment,totalPaymentThisYear: newTotalPaymentThisYear});
+    console.log("totalpayment this year = ", user.totalPaymentThisYear);
     const rent = await Rent.create(req.body);
     await AuditLog.create({
       action: "Create",
