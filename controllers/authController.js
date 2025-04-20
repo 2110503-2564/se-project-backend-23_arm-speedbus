@@ -80,12 +80,10 @@ exports.login = async (req, res, next) => {
     });
     sendTokenResponse(user, 200, res);
   } catch (err) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        msg: "Cannot convert email or password to string",
-      });
+    return res.status(401).json({
+      success: false,
+      msg: "Cannot convert email or password to string",
+    });
   }
 };
 
@@ -138,5 +136,30 @@ const sendTokenResponse = (user, statusCode, res) => {
 //@access   Private
 exports.getMe = async (req, res, next) => {
   const user = await User.findById(req.user.id);
+  res.status(200).json({ success: true, data: user });
+};
+
+//@desc     Update user details
+//@route    PUT /api/v1/auth/updatedetails
+//@access   Private
+exports.updateDetails = async (req, res, next) => {
+  const fieldsToUpdate = {
+    name: req.body.name,
+    tel: req.body.tel,
+    redeemCouponStatus: req.body.redeemCouponStatus,
+  };
+
+  const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true,
+  });
+
+  await AuditLog.create({
+    action: "Update",
+    user_id: req.user._id,
+    target: "users",
+    target_id: req.user._id,
+    description: `User id ${req.user._id} updated their details.`,
+  });
   res.status(200).json({ success: true, data: user });
 };
