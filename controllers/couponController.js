@@ -5,6 +5,15 @@ const Coupon = require("../models/CouponModel");
 // @access  Private
 exports.getAllCoupons = async (req, res, next) => {
   try {
+    // ตรวจสอบและอัปเดตสถานะคูปองที่หมดอายุ
+    const currentDate = new Date();
+
+    // อัปเดตสถานะคูปองที่หมดอายุเป็น 'Expired'
+    await Coupon.updateMany(
+      { expirationDate: { $lt: currentDate }, status: { $ne: "Expired" } },
+      { $set: { status: "Expired" } }
+    );
+
     const coupons = await Coupon.find().sort({
       expirationDate: 1,
       percentage: -1,
@@ -48,6 +57,17 @@ exports.getOneCoupon = async (req, res, next) => {
 exports.getMyCoupons = async (req, res, next) => {
   try {
     const userId = req.user._id;
+
+    // ตรวจสอบและอัปเดตสถานะคูปองที่หมดอายุให้เป็น "Expired"
+    const currentDate = new Date();
+    await Coupon.updateMany(
+      {
+        user_info: userId,
+        expirationDate: { $lt: currentDate },
+        status: { $ne: "Expired" },
+      },
+      { $set: { status: "Expired" } }
+    );
 
     const coupons = await Coupon.find({ user_info: userId }).sort({
       expirationDate: 1,
