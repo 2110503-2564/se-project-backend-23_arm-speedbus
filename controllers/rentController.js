@@ -4,25 +4,22 @@ const User = require("../models/UserModel");
 const AuditLog = require("../models/AuditLogModel");
 
 function getTotalDays(start, end) {
-    const diffMs = new Date(end).getTime() - new Date(start).getTime();
-    return (diffMs / (1000 * 60 * 60 * 24)) + 1;
+  const diffMs = new Date(end).getTime() - new Date(start).getTime();
+  return diffMs / (1000 * 60 * 60 * 24) + 1;
 }
 
-function calculateValueAfterDiscount(val,percentage){
-    let reduced = val*percentage/100
-    if(percentage==10){
-      reduced = Math.min(100,reduced);
-    }
-    else if(percentage==15){
-      reduced = reduced = Math.min(200,reduced);
-    }
-    else if(percentage==20){
-      reduced = reduced = Math.min(300,reduced);
-    }
-    else if(percentage==25){
-      reduced = reduced = Math.min(400,reduced);
-    }
-    return val-reduced;
+function calculateValueAfterDiscount(val, percentage) {
+  let reduced = (val * percentage) / 100;
+  if (percentage == 10) {
+    reduced = Math.min(100, reduced);
+  } else if (percentage == 15) {
+    reduced = reduced = Math.min(200, reduced);
+  } else if (percentage == 20) {
+    reduced = reduced = Math.min(300, reduced);
+  } else if (percentage == 25) {
+    reduced = reduced = Math.min(400, reduced);
+  }
+  return val - reduced;
 }
 
 // @desc   Get all rents
@@ -175,14 +172,23 @@ exports.createRent = async (req, res, next) => {
         message: `User ${req.user.name} has already rented 3 cars.`,
       });
     }
-    req.body.totalDays=getTotalDays(start,end);
-    req.body.totalPrice=calculateValueAfterDiscount(car.pricePerDay*req.body.totalDays,discount);
-    console.log(req.body.discount)
-    console.log(req.body.totalPrice)
+    req.body.totalDays = getTotalDays(start, end);
+    req.body.totalPrice = calculateValueAfterDiscount(
+      car.pricePerDay * req.body.totalDays,
+      discount
+    );
+    console.log(req.body.discount);
+    console.log(req.body.totalPrice);
     const user = await User.findById(user_info);
     const oldUserTotalPayment = user.totalPayment;
     const oldUserTotalPaymentThisYear = user.totalPaymentThisYear;
-    await User.updateOne({ _id: user_info }, { totalPayment: oldUserTotalPayment+req.body.totalPrice ,totalPaymentThisYear: oldUserTotalPaymentThisYear+req.body.totalPrice});
+    await User.updateOne(
+      { _id: user_info },
+      {
+        totalPayment: oldUserTotalPayment + req.body.totalPrice,
+        totalPaymentThisYear: oldUserTotalPaymentThisYear + req.body.totalPrice,
+      }
+    );
     const rent = await Rent.create(req.body);
     await AuditLog.create({
       action: "Create",
@@ -244,49 +250,49 @@ exports.updateRent = async (req, res, next) => {
     let carUpdated = false;
     // If the car is changed
     if (car_info && car_info !== rent.car_info) {
-        const newCarStartDate = startDate ? new Date(startDate) : rent.startDate;
-        const newCarEndDate = endDate ? new Date(endDate) : rent.endDate;
-        // Check if the new car has any overlapping rentals
-        const overlappingCarRents = await Rent.find({
-            _id: { $ne: rent._id }, // Exclude the current rent being updated
-            car_info: car_info, // Check for the new car
-            $or: [
-                {
-                    startDate: { $lte: newCarEndDate },
-                    endDate: { $gte: newCarStartDate },
-                }, // Check time overlapping
-            ],
+      const newCarStartDate = startDate ? new Date(startDate) : rent.startDate;
+      const newCarEndDate = endDate ? new Date(endDate) : rent.endDate;
+      // Check if the new car has any overlapping rentals
+      const overlappingCarRents = await Rent.find({
+        _id: { $ne: rent._id }, // Exclude the current rent being updated
+        car_info: car_info, // Check for the new car
+        $or: [
+          {
+            startDate: { $lte: newCarEndDate },
+            endDate: { $gte: newCarStartDate },
+          }, // Check time overlapping
+        ],
+      });
+      if (overlappingCarRents.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "The selected rental period overlaps with an existing rental for the new car",
         });
-        if (overlappingCarRents.length > 0) {
-            return res.status(400).json({
-                success: false,
-                message:
-                "The selected rental period overlaps with an existing rental for the new car",
-            });
-        }
-        // If no overlap, update the car_info
-        req.body.car_info = car_info;
-        carUpdated = true;
+      }
+      // If no overlap, update the car_info
+      req.body.car_info = car_info;
+      carUpdated = true;
     }
     // If startDate or endDate is changed
     if ((startDate || endDate) && !carUpdated) {
-        const newStartDate = startDate ? new Date(startDate) : rent.startDate;
-        const newEndDate = endDate ? new Date(endDate) : rent.endDate;
-        //Check time overlapping
-        const overlappingCarRents = await Rent.find({
-            _id: { $ne: rent._id }, // Exclude the current rent being updated
-            car_info: rent.car_info,
-            $or: [
-                { startDate: { $lte: newEndDate }, endDate: { $gte: newStartDate } }, // Check time overlapping
-            ],
+      const newStartDate = startDate ? new Date(startDate) : rent.startDate;
+      const newEndDate = endDate ? new Date(endDate) : rent.endDate;
+      //Check time overlapping
+      const overlappingCarRents = await Rent.find({
+        _id: { $ne: rent._id }, // Exclude the current rent being updated
+        car_info: rent.car_info,
+        $or: [
+          { startDate: { $lte: newEndDate }, endDate: { $gte: newStartDate } }, // Check time overlapping
+        ],
+      });
+      if (overlappingCarRents.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "The selected rental period overlaps with an existing rental for this car",
         });
-        if (overlappingCarRents.length > 0) {
-            return res.status(400).json({
-                success: false,
-                message:
-                "The selected rental period overlaps with an existing rental for this car",
-            });
-        }
+      }
     }
     // Update rent
     const carID = car_info ? car_info : rent.car_info;
@@ -294,11 +300,24 @@ exports.updateRent = async (req, res, next) => {
     const user = await User.findById(rent.user_info);
     const oldUserTotalPayment = user.totalPayment;
     const oldUserTotalPaymentThisYear = user.totalPaymentThisYear;
-    console.log(user.name)
-    req.body.totalDays=getTotalDays(start,end);
-    req.body.totalPrice=calculateValueAfterDiscount(req.body.totalDays*car.pricePerDay,rent.discount);
-    await User.updateOne({ _id: rent.user_info }, { totalPayment: oldUserTotalPayment - oldRentTotalPrice + req.body.totalPrice, totalPaymentThisYear: oldUserTotalPaymentThisYear - oldRentTotalPrice + req.body.totalPrice});
-    console.log(oldUserTotalPayment+','+oldRentTotalPrice+','+req.body.totalPrice);
+    console.log(user.name);
+    req.body.totalDays = getTotalDays(start, end);
+    req.body.totalPrice = calculateValueAfterDiscount(
+      req.body.totalDays * car.pricePerDay,
+      rent.discount
+    );
+    await User.updateOne(
+      { _id: rent.user_info },
+      {
+        totalPayment:
+          oldUserTotalPayment - oldRentTotalPrice + req.body.totalPrice,
+        totalPaymentThisYear:
+          oldUserTotalPaymentThisYear - oldRentTotalPrice + req.body.totalPrice,
+      }
+    );
+    console.log(
+      oldUserTotalPayment + "," + oldRentTotalPrice + "," + req.body.totalPrice
+    );
     rent = await Rent.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -345,8 +364,14 @@ exports.deleteRent = async (req, res, next) => {
     const user = await User.findById(rent.user_info);
     const oldUserTotalPayment = user.totalPayment;
     const oldRentTotalPriceThisYear = user.totalPaymentThisYear;
-    await User.updateOne({ _id: user._id }, { totalPayment: oldUserTotalPayment-rent.totalPrice , totalPayment: oldRentTotalPriceThisYear-rent.totalPrice});
-    
+    await User.updateOne(
+      { _id: user._id },
+      {
+        totalPayment: oldUserTotalPayment - rent.totalPrice,
+        totalPayment: oldRentTotalPriceThisYear - rent.totalPrice,
+      }
+    );
+
     await Rent.findByIdAndDelete(req.params.id);
     await AuditLog.create({
       action: "Delete",
