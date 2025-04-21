@@ -9,15 +9,19 @@ const Car = require('../models/CarModel');
 // @access   Public
 exports.getRatings = async (req, res) => {
     try {
-      // First check if there is a hotel.
-      const ratings = await Rating.find({ car_info : req.params.id });
+      const car = await Car.findById(req.params.id);
+      if (!car) {
+        return res.status(404).json({ success : false, msg : 'No car id exist'})
+      }
+
+      const ratings = await Rating.find({ car_info : req.params.id }).sort("-createdAt");
       if (!ratings) {
         return res.status(404).json({
           success: false,
           msg: `No car found with ID ${req.params.id}`,
         });
       }
-  
+      
       res.status(200).json({ success : true, count: ratings.length, data: ratings });
     } catch (err) {
       console.error("Error in getRatings:", err);
