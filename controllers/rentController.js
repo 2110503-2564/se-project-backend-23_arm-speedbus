@@ -378,18 +378,18 @@ exports.deleteRent = async (req, res, next) => {
     }
 
     const rentId = req.params.id;
-    if (rent.inclusionForCalculation == "Included") {
-      const user = await User.findById(rent.user_info);
-      const oldUserTotalPayment = user.totalPayment;
-      const oldUserTotalPriceThisYear = user.totalPaymentThisYear;
-      await User.updateOne(
-        { _id: user._id },
-        {
-          totalPayment: oldUserTotalPayment - rent.totalPrice,
-          totalPaymentThisYear: oldUserTotalPriceThisYear - rent.totalPrice,
-        }
-      );
-    }
+    const isInThisYear = (rent.inclusionForCalculation == "Included");
+    const user = await User.findById(rent.user_info);
+    const oldUserTotalPayment = user.totalPayment;
+    const oldUserTotalPriceThisYear = user.totalPaymentThisYear;
+    await User.updateOne(
+      { _id: user._id },
+      {
+        totalPayment: oldUserTotalPayment - rent.totalPrice,
+        totalPaymentThisYear: oldUserTotalPriceThisYear - (isInThisYear? rent.totalPrice : 0),
+      }
+    );
+    
 
     await Rent.findByIdAndDelete(req.params.id);
     await AuditLog.create({
