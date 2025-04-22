@@ -31,7 +31,8 @@ exports.getRatings = async (req, res) => {
   };
 
 // @desc    POST rating for car
-// route    POST /api/v1/cars/:id/ratings
+// @route   POST /api/v1/cars/:id/ratings
+// @access  Public
 exports.createRating = async (req, res, next) => {
   try {
       const carId = req.params.id;
