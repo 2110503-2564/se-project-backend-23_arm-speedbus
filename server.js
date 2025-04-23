@@ -36,6 +36,7 @@ const providerRoute = require("./routes/providerRoute");
 const auditLogRoute = require("./routes/auditLogRoute");
 const couponRoute = require("./routes/couponRoute");
 const couponTemplateRoute = require("./routes/couponTemplateRoute");
+const ratingRoute = require("./routes/ratingRoute");
 
 app.use("/api/v1/auditlogs", auditLogRoute);
 app.use("/api/v1/providers", providerRoute);
@@ -44,6 +45,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/rents", rentRoute);
 app.use("/api/v1/coupons", couponRoute);
 app.use("/api/v1/coupon-templates", couponTemplateRoute);
+app.use("/api/v1/rating", ratingRoute);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(

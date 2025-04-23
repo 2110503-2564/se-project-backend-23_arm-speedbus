@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const RatingSchema = new mongoose.Schema(
   {
+    rent_info: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Rent",
+      required: true,
+    },
     car_info: {
       type: mongoose.Schema.ObjectId,
       ref: "Car",
