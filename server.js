@@ -45,7 +45,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/rents", rentRoute);
 app.use("/api/v1/coupons", couponRoute);
 app.use("/api/v1/coupon-templates", couponTemplateRoute);
-app.use("/api/v1/rating", ratingRoute);
+app.use("/api/v1/ratings", ratingRoute);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(

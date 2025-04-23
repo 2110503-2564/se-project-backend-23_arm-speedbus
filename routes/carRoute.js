@@ -9,10 +9,12 @@ const {
 const { protect, authorize } = require("../middleware/auth");
 
 const rentRouter = require("./rentRoute");
+const ratingRouter = require("./ratingRoute");
 
 const router = express.Router();
 
 router.use("/:carId/rents", rentRouter);
+router.use("/:carId/ratings", ratingRouter);
 
 router.route("/").get(getCars).post(protect, authorize("admin"), createCar);
 router

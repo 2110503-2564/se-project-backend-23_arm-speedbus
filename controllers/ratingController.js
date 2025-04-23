@@ -1,20 +1,80 @@
 const Rating = require("../models/RatingModel");
 const Car = require("../models/CarModel");
 const Rent = require("../models/RentModel");
+const Provider = require("../models/ProviderModel");
 
-// @desc     Get ratings for a car
-// @route    GET /api/v1/ratings
+// @desc     Get ratings for a specific car
+// @route    GET /api/v1/cars/:carId/ratings
 // @access   Public
-exports.getRatings = async (req, res) => {};
+exports.getRatingsForCar = async (req, res, next) => {
+  try {
+    const { carId } = req.params;
 
-// @desc    POST rating for car
-// @route   POST /api/v1/ratings
+    // Check if carId is valid
+    const car = await Car.findById(carId);
+    if (!car) {
+      return res.status(404).json({ success: false, message: "Car not found" });
+    }
+
+    // Pull ratings for the car
+    const ratings = await Rating.find({ car_info: car._id }).populate(
+      "user_info",
+      "name email"
+    );
+
+    // response
+    res.status(200).json({
+      success: true,
+      count: ratings.length,
+      data: ratings,
+    });
+  } catch (err) {
+    console.error("Error in getRatings:", err);
+    res.status(500).json({ success: false, msg: "Cannot get ratings" });
+  }
+};
+
+// @desc    Get ratings for a specific provider
+// @route   GET /api/v1/providers/:providerId/ratings
 // @access  Public
+exports.getRatingsForProvider = async (req, res, next) => {
+  try {
+    const { providerId } = req.params;
+
+    // Check if providerId is valid
+    const provider = await Provider.findById(providerId);
+    if (!provider) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Provider not found" });
+    }
+
+    // Pull ratings for the provider
+    const ratings = await Rating.find({ provider_info: provider._id }).populate(
+      "user_info",
+      "name email"
+    );
+
+    // response
+    res.status(200).json({
+      success: true,
+      count: ratings.length,
+      data: ratings,
+    });
+  } catch (err) {
+    console.error("Error in getRatings:", err);
+    res.status(500).json({ success: false, msg: "Cannot get ratings" });
+  }
+};
+
+// @desc    Create a new rating
+// @route   POST /api/v1/ratings
+// @access  Private
 exports.createRating = async (req, res, next) => {
   try {
     const { rent_info, car_rating, provider_rating, review } = req.body;
 
-    // 1. ตรวจสอบ rent ว่ามีจริงไหม
+    // Check if rent_info is valid
     const rent = await Rent.findById(rent_info);
     if (!rent) {
       return res
@@ -22,13 +82,13 @@ exports.createRating = async (req, res, next) => {
         .json({ success: false, message: "Rent not found" });
     }
 
-    // 2. ตรวจสอบ car ที่เช่ามาว่ามีจริงไหม
+    // Check if car_info is valid
     const car = await Car.findById(rent.car_info);
     if (!car) {
       return res.status(404).json({ success: false, message: "Car not found" });
     }
 
-    // ✅ 3. ตรวจสอบว่ามีการให้คะแนน rent นี้ไปแล้วหรือยัง
+    // Check if user has already rated this rent
     const existingRating = await Rating.findOne({ rent_info: rent._id });
     if (existingRating) {
       return res.status(400).json({
@@ -37,7 +97,7 @@ exports.createRating = async (req, res, next) => {
       });
     }
 
-    // 4. สร้าง rating ใหม่
+    // Create a new rating
     const newRating = await Rating.create({
       rent_info,
       car_info: car._id,
@@ -48,7 +108,7 @@ exports.createRating = async (req, res, next) => {
       review,
     });
 
-    // 5. ตอบกลับ
+    // response
     res.status(201).json({
       success: true,
       data: newRating,
