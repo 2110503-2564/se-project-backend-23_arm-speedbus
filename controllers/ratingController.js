@@ -67,6 +67,30 @@ exports.getRatingsForProvider = async (req, res, next) => {
   }
 };
 
+// @desc    Get ratings for the logged-in user
+// @route   GET /api/v1/ratings/me
+// @access  Private
+exports.getMyRatings = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    console.log("User ID:", userId);
+
+    const ratings = await Rating.find({ user_info: userId })
+      .populate("car_info", "name vin_plate")
+      .populate("provider_info", "name");
+
+    res.status(200).json({
+      success: true,
+      count: ratings.length,
+      data: ratings,
+    });
+  } catch (err) {
+    console.error("Error in getMyRatings:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // @desc    Create a new rating
 // @route   POST /api/v1/ratings
 // @access  Private
@@ -116,5 +140,68 @@ exports.createRating = async (req, res, next) => {
   } catch (err) {
     console.error("Error in createRating:", err);
     res.status(500).json({ success: false, msg: "Cannot create rating" });
+  }
+};
+
+// @desc    Update a rating
+// @route   PUT /api/v1/ratings/:id
+// @access  Private
+exports.updateRating = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { car_rating, provider_rating, review } = req.body;
+
+    // Check if rating exists
+    const rating = await Rating.findById(id);
+    if (!rating) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Rating not found" });
+    }
+
+    // Update the rating
+    rating.car_rating = car_rating || rating.car_rating;
+    rating.provider_rating = provider_rating || rating.provider_rating;
+    rating.review = review || rating.review;
+
+    await rating.save();
+
+    // response
+    res.status(200).json({
+      success: true,
+      data: rating,
+    });
+  } catch (err) {
+    console.error("Error in updateRating:", err);
+    res.status(500).json({ success: false, msg: "Cannot update rating" });
+  }
+};
+
+// @desc    Delete a rating
+// @route   DELETE /api/v1/ratings/:id
+// @access  Private
+exports.deleteRating = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Check if rating exists
+    const rating = await Rating.findById(id);
+    if (!rating) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Rating not found" });
+    }
+
+    // Delete the rating
+    await rating.deleteOne();
+
+    // response
+    res.status(200).json({
+      success: true,
+      data: {},
+    });
+  } catch (err) {
+    console.error("Error in deleteRating:", err);
+    res.status(500).json({ success: false, msg: "Cannot delete rating" });
   }
 };

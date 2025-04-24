@@ -2,7 +2,10 @@ const express = require("express");
 const {
   getRatingsForCar,
   getRatingsForProvider,
+  getMyRatings,
   createRating,
+  updateRating,
+  deleteRating,
 } = require("../controllers/ratingController");
 const { protect, authorize } = require("../middleware/auth");
 
@@ -16,5 +19,12 @@ router
     res.status(400).json({ success: false, message: "Invalid route" });
   })
   .post(protect, authorize("user", "admin"), createRating);
+
+router
+  .route("/:id")
+  .put(protect, authorize("user", "admin"), updateRating)
+  .delete(protect, authorize("user", "admin"), deleteRating);
+
+router.route("/me").get(protect, authorize("user", "admin"), getMyRatings);
 
 module.exports = router;
