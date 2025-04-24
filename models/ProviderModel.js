@@ -44,6 +44,11 @@ const ProviderSchema = new mongoose.Schema(
         "Time must be in HH:MM:SS format",
       ],
     },
+    averageRating: {
+      type: Number,
+      min: 1,
+      max: 5,
+    },
   },
   {
     toJSON: { virtuals: true },

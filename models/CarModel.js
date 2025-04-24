@@ -32,6 +32,11 @@ const CarSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    averageRating: {
+      type: Number,
+      min: 1,
+      max: 5,
+    },
   },
   {
     toJSON: { virtuals: true },

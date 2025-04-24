@@ -170,6 +170,30 @@ exports.createRating = async (req, res, next) => {
       review,
     });
 
+    // Update the average rating for the car only if there are ratings for the car
+    const carRatings = await Rating.find({ car_info: car._id });
+    if (carRatings.length > 0) {
+      const carAverageRating =
+        carRatings.reduce((acc, rating) => acc + rating.car_rating, 0) /
+        carRatings.length;
+      await Car.findByIdAndUpdate(car._id, { averageRating: carAverageRating });
+    }
+
+    // Update the average rating for the provider only if there are ratings for the provider
+    const providerRatings = await Rating.find({
+      provider_info: car.provider_info,
+    });
+    if (providerRatings.length > 0) {
+      const providerAverageRating =
+        providerRatings.reduce(
+          (acc, rating) => acc + rating.provider_rating,
+          0
+        ) / providerRatings.length;
+      await Provider.findByIdAndUpdate(car.provider_info, {
+        averageRating: providerAverageRating,
+      });
+    }
+
     // response
     res.status(201).json({
       success: true,
