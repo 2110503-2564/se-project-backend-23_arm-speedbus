@@ -126,6 +126,16 @@ exports.createRating = async (req, res, next) => {
         .json({ success: false, message: "Rent not found" });
     }
 
+    // Check end date must be in the past before rating
+    const endDate = new Date(rent.endDate);
+    const currentDate = new Date();
+    if (endDate > currentDate) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot rate a rent that is not yet completed.",
+      });
+    }
+
     // Check if car_info is valid
     const car = await Car.findById(rent.car_info);
     if (!car) {
