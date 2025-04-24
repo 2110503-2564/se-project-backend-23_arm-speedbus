@@ -3,6 +3,26 @@ const Car = require("../models/CarModel");
 const Rent = require("../models/RentModel");
 const Provider = require("../models/ProviderModel");
 
+// @desc     Get all ratings
+// @route    GET /api/v1/ratings/all
+// @access   Private
+exports.getAllRatings = async (req, res, next) => {
+  try {
+    const ratings = await Rating.find()
+      .populate("car_info", "name vin_plate")
+      .populate("provider_info", "name")
+      .populate("user_info", "name email");
+    res.status(200).json({
+      success: true,
+      count: ratings.length,
+      data: ratings,
+    });
+  } catch (err) {
+    console.error("Error in getAllRatings:", err);
+    res.status(500).json({ success: false, msg: "Cannot get ratings" });
+  }
+};
+
 // @desc     Get ratings for a specific car
 // @route    GET /api/v1/cars/:carId/ratings
 // @access   Public

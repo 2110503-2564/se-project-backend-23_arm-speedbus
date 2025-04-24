@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  getAllRatings,
   getRatingsForCar,
   getRatingsForProvider,
   getMyRatings,
@@ -16,9 +17,10 @@ router
   .get((req, res, next) => {
     if (req.params.carId) return getRatingsForCar(req, res, next);
     if (req.params.providerId) return getRatingsForProvider(req, res, next);
-    res.status(400).json({ success: false, message: "Invalid route" });
   })
   .post(protect, authorize("user", "admin"), createRating);
+
+router.route("/all").get(protect, authorize("admin"), getAllRatings);
 
 router
   .route("/:id")
