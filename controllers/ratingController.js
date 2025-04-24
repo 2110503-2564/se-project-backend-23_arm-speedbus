@@ -126,6 +126,14 @@ exports.createRating = async (req, res, next) => {
         .json({ success: false, message: "Rent not found" });
     }
 
+    // Check if the user is the one who rented the car
+    if (rent.user_info.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to rate this rent",
+      });
+    }
+
     // Check end date must be in the past before rating
     const endDate = new Date(rent.endDate);
     const currentDate = new Date();
@@ -189,6 +197,14 @@ exports.updateRating = async (req, res, next) => {
         .json({ success: false, message: "Rating not found" });
     }
 
+    // Check if the user is the owner of the rating
+    if (rating.user_info.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this rating",
+      });
+    }
+
     // Update the rating
     rating.car_rating = car_rating || rating.car_rating;
     rating.provider_rating = provider_rating || rating.provider_rating;
@@ -220,6 +236,14 @@ exports.deleteRating = async (req, res, next) => {
       return res
         .status(404)
         .json({ success: false, message: "Rating not found" });
+    }
+
+    // Check if the user is the owner of the rating
+    if (rating.user_info.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this rating",
+      });
     }
 
     // Delete the rating
