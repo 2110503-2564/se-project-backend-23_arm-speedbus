@@ -223,7 +223,10 @@ exports.updateRating = async (req, res, next) => {
     }
 
     // Check if the user is the owner of the rating
-    if (rating.user_info.toString() !== req.user._id.toString()) {
+    if (
+      req.user.role !== "admin" &&
+      rating.user_info.toString() !== req.user._id.toString()
+    ) {
       return res.status(403).json({
         success: false,
         message: "You are not authorized to update this rating",
@@ -264,7 +267,10 @@ exports.deleteRating = async (req, res, next) => {
     }
 
     // Check if the user is the owner of the rating
-    if (rating.user_info.toString() !== req.user._id.toString()) {
+    if (
+      req.user.role !== "admin" &&
+      rating.user_info.toString() !== req.user._id.toString()
+    ) {
       return res.status(403).json({
         success: false,
         message: "You are not authorized to delete this rating",
