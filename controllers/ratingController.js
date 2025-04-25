@@ -11,7 +11,9 @@ exports.getAllRatings = async (req, res, next) => {
     const ratings = await Rating.find()
       .populate("car_info", "name vin_plate")
       .populate("provider_info", "name")
-      .populate("user_info", "name email");
+      .populate("user_info", "name email")
+      .sort({ updatedAt: -1 });
+
     res.status(200).json({
       success: true,
       count: ratings.length,
@@ -37,10 +39,9 @@ exports.getRatingsForCar = async (req, res, next) => {
     }
 
     // Pull ratings for the car
-    const ratings = await Rating.find({ car_info: car._id }).populate(
-      "user_info",
-      "name email"
-    );
+    const ratings = await Rating.find({ car_info: car._id })
+      .populate("user_info", "name email")
+      .sort({ updatedAt: -1 });
 
     // response
     res.status(200).json({
@@ -70,10 +71,9 @@ exports.getRatingsForProvider = async (req, res, next) => {
     }
 
     // Pull ratings for the provider
-    const ratings = await Rating.find({ provider_info: provider._id }).populate(
-      "user_info",
-      "name email"
-    );
+    const ratings = await Rating.find({ provider_info: provider._id })
+      .populate("user_info", "name email")
+      .sort({ updatedAt: -1 });
 
     // response
     res.status(200).json({
@@ -98,7 +98,8 @@ exports.getMyRatings = async (req, res) => {
 
     const ratings = await Rating.find({ user_info: userId })
       .populate("car_info", "name vin_plate")
-      .populate("provider_info", "name");
+      .populate("provider_info", "name")
+      .sort({ updatedAt: -1 });
 
     res.status(200).json({
       success: true,
