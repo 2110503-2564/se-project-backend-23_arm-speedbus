@@ -51,9 +51,9 @@ const RentSchema = new mongoose.Schema(
       default: "No coupon applied",
     },
     discount: {
-        type: Number,
-        required: true,
-        default: 0,
+      type: Number,
+      required: true,
+      default: 0,
     },
     maxDiscount: {
       type: Number,
@@ -76,5 +76,14 @@ const RentSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+// if the rent after the end date, then it will be finished
+RentSchema.pre("save", function (next) {
+  const currentDate = new Date();
+  if (this.endDate < currentDate) {
+    this.status = "Finished";
+  }
+  next();
+});
 
 module.exports = mongoose.model("Rent", RentSchema);

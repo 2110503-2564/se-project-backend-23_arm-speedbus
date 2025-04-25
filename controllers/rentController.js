@@ -74,6 +74,13 @@ exports.getRents = async (req, res, next) => {
   }
 
   try {
+    // if current date is greater than endDate, update status to finished
+    const currentDate = new Date();
+    await Rent.updateMany(
+      { endDate: { $lt: currentDate }, status: "Confirmed" },
+      { status: "Finished" }
+    );
+
     const rents = await query;
     res.status(200).json({ success: true, count: rents.length, data: rents });
   } catch (error) {
@@ -378,7 +385,7 @@ exports.deleteRent = async (req, res, next) => {
     }
 
     const rentId = req.params.id;
-    const isInThisYear = (rent.inclusionForCalculation == "Included");
+    const isInThisYear = rent.inclusionForCalculation == "Included";
     const user = await User.findById(rent.user_info);
     const oldUserTotalPayment = user.totalPayment;
     const oldUserTotalPriceThisYear = user.totalPaymentThisYear;
@@ -386,10 +393,10 @@ exports.deleteRent = async (req, res, next) => {
       { _id: user._id },
       {
         totalPayment: oldUserTotalPayment - rent.totalPrice,
-        totalPaymentThisYear: oldUserTotalPriceThisYear - (isInThisYear? rent.totalPrice : 0),
+        totalPaymentThisYear:
+          oldUserTotalPriceThisYear - (isInThisYear ? rent.totalPrice : 0),
       }
     );
-    
 
     await Rent.findByIdAndDelete(req.params.id);
     await AuditLog.create({
