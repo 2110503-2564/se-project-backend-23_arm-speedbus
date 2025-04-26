@@ -237,6 +237,7 @@ exports.updateRating = async (req, res, next) => {
     rating.car_rating = car_rating || rating.car_rating;
     rating.provider_rating = provider_rating || rating.provider_rating;
     rating.review = review || rating.review;
+    rating.isEdited = true;
 
     await rating.save();
 

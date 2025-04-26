@@ -39,6 +39,10 @@ const RatingSchema = new mongoose.Schema(
       type: String,
       maxlength: 500,
     },
+    isEdited: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
