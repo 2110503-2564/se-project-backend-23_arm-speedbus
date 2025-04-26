@@ -1,5 +1,5 @@
 # ใช้ Node.js base image
-FROM node:16
+FROM node:18
 
 # ตั้ง working directory
 WORKDIR /usr/src/app
