@@ -88,10 +88,10 @@ router
  *             properties:
  *               email:
  *                 type: string
- *                 example: user@example.com
+ *                 example: user5@gmail.com
  *               password:
  *                 type: string
- *                 example: password123
+ *                 example: 123456
  *     responses:
  *       200:
  *         description: Login success with token
@@ -118,7 +118,7 @@ router
  *         description: List of coupons
  *
  *   post:
- *     summary: Create a new coupon (Admin, User)
+ *     summary: Redeem a new coupon (User)
  *     tags: [Coupons]
  *     security:
  *       - bearerAuth: []
@@ -174,27 +174,6 @@ router
  *     responses:
  *       200:
  *         description: Coupon details
-
- *   put:
- *     summary: Update a coupon by ID (Admin, User)
- *     tags: [Coupons]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Discount'
- *     responses:
- *       200:
- *         description: Coupon updated
 
  *   delete:
  *     summary: Delete a coupon by ID (Admin, User)
