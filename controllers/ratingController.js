@@ -119,6 +119,14 @@ exports.createRating = async (req, res, next) => {
   try {
     const { rent_info, car_rating, provider_rating, review } = req.body;
 
+    // check if all required fields are provided (ทำแบบไม่ rate provider ไว้ก่อน)
+    if (!rent_info || !car_rating || !review) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide all required fields",
+      });
+    }
+
     // Check if rent_info is valid
     const rent = await Rent.findById(rent_info);
     if (!rent) {
