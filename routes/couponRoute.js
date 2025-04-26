@@ -52,8 +52,6 @@ const router = express.Router({ mergeParams: true });
  *           example: "Available"
  */
 
-
-
 router
   .route("/")
   .get(protect, authorize("admin"), getAllCoupons)
