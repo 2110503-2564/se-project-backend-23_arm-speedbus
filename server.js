@@ -8,6 +8,38 @@ const { xss } = require("express-xss-sanitizer");
 const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
 const cors = require("cors");
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Library API',
+      version: '1.0.0',
+      description: 'A simple Express VacQ API'
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+  apis: ['./routes/*.js'], // your route files
+};
+
+
+
 
 dotenv.config({ path: "./config/config.env" });
 
@@ -19,7 +51,9 @@ const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, //10 mins
   max: 1000,
 });
+ const swaggerDocs=swaggerJsDoc(swaggerOptions);
 
+ 
 app.use(express.json());
 app.use(cookieParser());
 app.use(mongoSanitize());
@@ -47,6 +81,8 @@ app.use("/api/v1/coupons", couponRoute);
 app.use("/api/v1/coupon-templates", couponTemplateRoute);
 app.use("/api/v1/ratings", ratingRoute);
 
+//tester
+app.use('/api-docs',swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 const PORT = process.env.PORT || 5000;
 const server = app.listen(
   PORT,
