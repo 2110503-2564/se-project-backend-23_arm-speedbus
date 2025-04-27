@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5000
 
 # สั่งให้รันแอป
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
