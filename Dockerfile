@@ -1,20 +1,20 @@
-# ใช้ Node.js base image
-FROM node:18
+# Use Node.js base image
+FROM node:18-alpine
 
-# ตั้ง working directory
+# Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# คัดลอก package.json และ package-lock.json
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# ติดตั้ง dependencies
+# Install the dependencies defined in package.json
 RUN npm install
 
-# คัดลอกไฟล์ทั้งหมด
+# Copy all the other application files into the container
 COPY . .
 
-# เปิดพอร์ต
+# Expose port 5000 for the backend application
 EXPOSE 5000
 
-# สั่งให้รันแอป
+# Command to run the backend application
 CMD ["npm", "run", "dev"]
