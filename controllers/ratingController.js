@@ -250,7 +250,6 @@ exports.updateRating = async (req, res, next) => {
     await rating.save();
 
     // Update the average rating for the car only if there are ratings for the car
-    constRating.findOne(req.params._id);
     const carRatings = await Rating.find({ car_info: rating.car_info });
     if (carRatings.length > 0) {
       const carAverageRating =
