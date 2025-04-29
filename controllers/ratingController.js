@@ -249,6 +249,18 @@ exports.updateRating = async (req, res, next) => {
 
     await rating.save();
 
+    // Update the average rating for the car only if there are ratings for the car
+    constRating.findOne(req.params._id);
+    const carRatings = await Rating.find({ car_info: rating.car_info });
+    if (carRatings.length > 0) {
+      const carAverageRating =
+        carRatings.reduce((acc, rating) => acc + rating.car_rating, 0) /
+        carRatings.length;
+      await Car.findByIdAndUpdate(rating.car_info, {
+        averageRating: carAverageRating,
+      });
+    }
+
     // response
     res.status(200).json({
       success: true,
@@ -288,6 +300,17 @@ exports.deleteRating = async (req, res, next) => {
 
     // Delete the rating
     await rating.deleteOne();
+
+    // Update the average rating for the car only if there are ratings for the car
+    const carRatings = await Rating.find({ car_info: rating.car_info });
+    if (carRatings.length > 0) {
+      const carAverageRating =
+        carRatings.reduce((acc, rating) => acc + rating.car_rating, 0) /
+        carRatings.length;
+      await Car.findByIdAndUpdate(rating.car_info, {
+        averageRating: carAverageRating,
+      });
+    }
 
     // response
     res.status(200).json({
